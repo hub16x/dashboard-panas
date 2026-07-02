@@ -1,0 +1,232 @@
+        :root {
+            --accent: #00f2ff;
+            --pink: #ff007a;
+            --bg: #010409;
+            --panel: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --dynamic-color: var(--accent);
+        }
+
+        body {
+            font-family: monospace, sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: var(--text);
+            overflow: hidden;
+            transition: background 0.5s;
+        }
+
+        .master-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+            width: 98%;
+            max-width: 1600px;
+            height: 94vh;
+        }
+
+        .glass-panel {
+            background: var(--panel);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 35px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--dynamic-color);
+            margin-bottom: 20px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .folder-item {
+            padding: 14px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+
+        .folder-item.active {
+            border-color: var(--dynamic-color);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .player-center {
+            text-align: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .viz-container {
+            position: relative;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .video-circle {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 2;
+            border: 5px solid var(--dynamic-color);
+            box-shadow: 0 0 60px var(--dynamic-color);
+            background: #000;
+            transition: transform 0.1s, border-color 0.4s;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        canvas {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            pointer-events: none;
+            opacity: 0.7;
+            z-index: 3;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--dynamic-color);
+            box-shadow: 0 0 15px var(--dynamic-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #fff;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 10px;
+            font-family: monospace, sans-serif;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--dynamic-color);
+            color: #000;
+        }
+
+        button.active-toggle {
+            background: var(--dynamic-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--dynamic-color);
+        }
+
+        .vol-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 12px;
+        }
+
+        .vol-container span {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .song-item {
+            padding: 12px;
+            font-size: 11px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.02);
+            transition: 0.2s;
+        }
+
+        .song-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .del-btn {
+            color: #ff4444;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .del-btn:hover {
+            background: rgba(255, 68, 68, 0.2);
+        }
+
+        .scroll {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        input[type="range"] {
+            accent-color: var(--dynamic-color);
+            cursor: pointer;
+            width: 100px;
+        }
+
+        input[type="text"] {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            width: -webkit-fill-available;
+            font-family: monospace;
+        }
+
+        body.drag-over {
+            background: #001a1c !important;
+            outline: 3px dashed var(--accent);
+            outline-offset: -10px;
+        }

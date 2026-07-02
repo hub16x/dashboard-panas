@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Accesos Directos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            font-family: "Inter", -apple-system, sans-serif;
+            background-color: transparent;
+            /* Se integra con el fondo animado del padre */
+            color: #e2edfd;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar estilizado */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(6, 11, 20, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 180, 216, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 237, 245, 0.6);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 120px 24px;
+        }
+
+        /* Cabecera minimalista */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a3e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            color: #00edf5;
+            text-shadow: 0 0 10px rgba(0, 237, 245, 0.4);
+        }
+
+        /* Grid de accesos directos */
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        /* Tarjeta de acceso directo */
+        .shortcut-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(8, 18, 36, 0.55), rgba(4, 9, 20, 0.7));
+            border: 1px solid rgba(0, 180, 216, 0.15);
+            border-top-color: rgba(0, 237, 245, 0.25);
+            border-radius: 20px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            text-decoration: none;
+            color: #e2edfd;
+            backdrop-filter: blur(25px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            min-height: 150px;
+            box-sizing: border-box;
+        }
+
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 237, 245, 0.5);
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.45),
+                0 0 20px rgba(0, 180, 216, 0.2);
+        }
+
+        /* Icono dentro del acceso directo */
+        .shortcut-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: rgba(0, 180, 216, 0.08);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .shortcut-card:hover .shortcut-icon {
+            transform: scale(1.08);
+            border-color: #00edf5;
+        }
+
+        .shortcut-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .shortcut-icon i {
+            font-size: 28px;
+            color: #00edf5;
+        }
+
+        .shortcut-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgba(163, 229, 255, 0.85);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            transition: color 0.2s;
+        }
+
+        .shortcut-card:hover .shortcut-name {
+            color: #ffffff;
+        }
+
+        /* Botón eliminar (X) */
+        .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 75, 75, 0.1);
+            border: 1px solid rgba(255, 75, 75, 0.2);
+            color: rgba(255, 100, 100, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s;
+            z-index: 2;
+        }
+
+        .shortcut-card:hover .delete-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 75, 75, 0.8);
+            color: #fff;
+            border-color: #ff4b4b;
+            box-shadow: 0 0 10px rgba(255, 75, 75, 0.4);
+        }
+
+        /* Botón especial para Añadir Acceso */
+        .add-card {
+            border: 2px dashed rgba(0, 180, 216, 0.3);
+            background: rgba(8, 18, 36, 0.25);
+            cursor: pointer;
+            justify-content: center;
+        }
+
+        .add-card:hover {
+            border-color: #00edf5;
+            background: rgba(0, 180, 216, 0.05);
+            box-shadow: 0 0 25px rgba(0, 237, 245, 0.2);
+        }
+
+        .add-card i.add-plus {
+            font-size: 32px;
+            color: rgba(0, 180, 216, 0.6);
+            margin-bottom: 8px;
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .add-card:hover i.add-plus {
+            transform: scale(1.1) rotate(90deg);
+            color: #00edf5;
+        }
+
+        .add-card span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(163, 229, 255, 0.6);
+        }
+
+        .add-card:hover span {
+            color: #fff;
+        }
+
+        /* ── VENTANA MODAL (Formulario de creación) ──────── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 9, 20, 0.75);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-card {
+            background: linear-gradient(135deg, rgba(8, 18, 36, 0.9), rgba(4, 9, 20, 0.95));
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            border-top-color: rgba(0, 237, 245, 0.5);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 180, 216, 0.15);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.open .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 1.3rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-card h3 i {
+            color: #00edf5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(163, 229, 255, 0.6);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="url"] {
+            width: 100%;
+            background: rgba(4, 9, 20, 0.6);
+            border: 1px solid rgba(0, 180, 216, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            color: #fff;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #00edf5;
+            box-shadow: 0 0 10px rgba(0, 237, 245, 0.15);
+        }
+
+        /* Selector de Tipo de Icono */
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .selector-tab {
+            background: rgba(0, 180, 216, 0.05);
+            border: 1px solid rgba(0, 180, 216, 0.15);
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: rgba(163, 229, 255, 0.7);
+            transition: all 0.2s;
+        }
+
+        .selector-tab.active {
+            background: rgba(0, 180, 216, 0.25);
+            border-color: #00edf5;
+            color: #fff;
+            box-shadow: inset 0 1px 8px rgba(0, 237, 245, 0.15);
+        }
+
+        /* Campo subir archivo personalizado */
+        .file-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-btn {
+            background: rgba(0, 180, 216, 0.15);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .file-btn:hover {
+            background: rgba(0, 237, 245, 0.25);
+            border-color: #00edf5;
+        }
+
+        .file-btn input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        #file-name {
+            font-size: 0.75rem;
+            color: rgba(163, 229, 255, 0.5);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        /* Botones de acción modal */
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(163, 229, 255, 0.7);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.8), rgba(0, 180, 216, 0.4));
+            border: 1px solid rgba(0, 237, 245, 0.4);
+            color: #fff;
+        }
+
+        .btn-submit:hover {
+            background: #00edf5;
+            color: #060b14;
+            box-shadow: 0 0 15px rgba(0, 237, 245, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header class="header">
+            <h1><i class="ri-dashboard-3-line"></i> Accesos Directos</h1>
+        </header>
+
+        <!-- GRID DE ACCESOS -->
+        <div class="shortcut-grid" id="shortcuts-container">
+            <!-- Los accesos directos se generan de forma dinámica -->
+
+            <!-- BOTÓN FIJO DE AGREGAR -->
+            <div class="shortcut-card add-card" onclick="openModal()">
+                <i class="ri-add-line add-plus"></i>
+                <span>Añadir Acceso</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── MODAL ─────────────────────────────────────────── -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <h3><i class="ri-link-m"></i> Nuevo Acceso Directo</h3>
+
+            <div class="form-group">
+                <label for="scName">Nombre de la Web</label>
+                <input type="text" id="scName" placeholder="Ej. Google" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="scUrl">Dirección URL</label>
+                <input type="url" id="scUrl" placeholder="Ej. https://google.com" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label>Origen del Icono</label>
+                <div class="icon-selector">
+                    <div class="selector-tab active" data-type="auto" onclick="selectTab('auto')">Auto</div>
+                    <div class="selector-tab" data-type="url" onclick="selectTab('url')">URL Imagen</div>
+                    <div class="selector-tab" data-type="upload" onclick="selectTab('upload')">Subir Archivo</div>
+                </div>
+
+                <!-- Inputs condicionales -->
+                <div id="input-url-container" style="display: none;">
+                    <input type="url" id="scIconUrl" placeholder="https://ejemplo.com/icono.png" autocomplete="off">
+                </div>
+
+                <div id="input-upload-container" style="display: none;">
+                    <div class="file-input-wrapper">
+                        <div class="file-btn">
+                            <i class="ri-upload-cloud-line"></i> Seleccionar Imagen
+                            <input type="file" id="scFile" accept="image/*" onchange="onFileUploaded(event)">
+                        </div>
+                        <span id="file-name">Ninguno seleccionado</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn btn-submit" onclick="addShortcut()">Añadir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LÓGICA DE CONTROL -->
+    <script>
+        // Accesos por defecto
+        const DEFAULT_SHORTCUTS = [
+            { id: 'sc1', name: 'Google', url: 'https://google.com', iconType: 'auto', iconData: '' },
+            { id: 'sc2', name: 'YouTube', url: 'https://youtube.com', iconType: 'auto', iconData: '' },
+            { id: 'sc3', name: 'GitHub', url: 'https://github.com', iconType: 'auto', iconData: '' },
+            { id: 'sc4', name: 'ChatGPT', url: 'https://chatgpt.com', iconType: 'auto', iconData: '' }
+        ];
+
+        let shortcuts = [];
+        let selectedIconType = 'auto'; // 'auto', 'url', 'upload'
+        let uploadedBase64 = '';
+
+        // Cargar datos
+        function loadShortcuts() {
+            const saved = localStorage.getItem('custom_shortcuts');
+            if (saved) {
+                shortcuts = JSON.parse(saved);
+            } else {
+                shortcuts = [...DEFAULT_SHORTCUTS];
+                saveToStorage();
+            }
+            renderShortcuts();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem('custom_shortcuts', JSON.stringify(shortcuts));
+        }
+
+        // Renderizar tarjetas en pantalla
+        function renderShortcuts() {
+            const container = document.getElementById('shortcuts-container');
+
+            // Remover tarjetas dinámicas anteriores (dejando solo el botón de añadir al final)
+            const cards = container.querySelectorAll('.shortcut-card:not(.add-card)');
+            cards.forEach(card => card.remove());
+
+            shortcuts.forEach((sc) => {
+                const card = document.createElement('a');
+                card.className = 'shortcut-card';
+                card.href = sc.url;
+                card.target = '_blank';
+                card.id = sc.id;
+
+                // Determinar qué icono usar
+                let iconHtml = '';
+                if (sc.iconType === 'auto') {
+                    // Extraemos el dominio para obtener el favicon a alta resolución vía el servicio de Google
+                    const domain = getDomain(sc.url);
+                    iconHtml = `<img src="https://www.google.com/s2/favicons?sz=128&domain=${domain}" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<i class=\\'ri-global-line\\'></i>'">`;
+                } else if (sc.iconType === 'url') {
+                    iconHtml = `<img src="${sc.iconData}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'ri-image-line\\'></i>'">`;
+                } else if (sc.iconType === 'upload') {
+                    iconHtml = `<img src="${sc.iconData}">`;
+                }
+
+                card.innerHTML = `
+          <button class="delete-btn" onclick="deleteShortcut(event, '${sc.id}')">
+            <i class="ri-close-line"></i>
+          </button>
+          <div class="shortcut-icon">
+            ${iconHtml}
+          </div>
+          <div class="shortcut-name">${sc.name}</div>
+        `;
+
+                // Insertar justo antes del botón "Añadir Acceso"
+                container.insertBefore(card, container.lastElementChild);
+            });
+        }
+
+        // Obtener dominio limpio de una URL
+        function getDomain(url) {
+            try {
+                let hostname = new URL(url).hostname;
+                return hostname;
+            } catch (e) {
+                return url;
+            }
+        }
+
+        // Eliminar Acceso
+        function deleteShortcut(event, id) {
+            event.preventDefault(); // Evita abrir la URL del enlace al pulsar la X
+            event.stopPropagation(); // Evita propagación de eventos
+
+            shortcuts = shortcuts.filter(sc => sc.id !== id);
+            saveToStorage();
+            renderShortcuts();
+        }
+
+        // Control de ventanas y modal
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            // Limpiar campos del formulario
+            document.getElementById('scName').value = '';
+            document.getElementById('scUrl').value = '';
+            document.getElementById('scIconUrl').value = '';
+            document.getElementById('scFile').value = '';
+            document.getElementById('file-name').innerText = 'Ninguno seleccionado';
+            uploadedBase64 = '';
+            selectTab('auto');
+        }
+
+        // Selector de pestañas para iconos
+        function selectTab(type) {
+            selectedIconType = type;
+            document.querySelectorAll('.selector-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.type === type);
+            });
+
+            // Visibilidad de contenedores de inputs
+            document.getElementById('input-url-container').style.display = type === 'url' ? 'block' : 'none';
+            document.getElementById('input-upload-container').style.display = type === 'upload' ? 'block' : 'none';
+        }
+
+        // Lector de archivo subido (conversión a Base64)
+        function onFileUploaded(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('file-name').innerText = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                uploadedBase64 = evt.target.result; // El contenido de la imagen en Base64
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Añadir nuevo acceso al listado
+        function addShortcut() {
+            const name = document.getElementById('scName').value.trim();
+            let url = document.getElementById('scUrl').value.trim();
+
+            if (!name || !url) {
+                alert("Por favor, rellena el nombre y la dirección URL.");
+                return;
+            }
+
+            // Corrección rápida de URL si no lleva protocolo
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+
+            let iconData = '';
+            if (selectedIconType === 'url') {
+                iconData = document.getElementById('scIconUrl').value.trim();
+                if (!iconData) {
+                    alert("Ingresa la URL de la imagen.");
+                    return;
+                }
+            } else if (selectedIconType === 'upload') {
+                iconData = uploadedBase64;
+                if (!iconData) {
+                    alert("Selecciona un archivo de imagen válido.");
+                    return;
+                }
+            }
+
+            const newShortcut = {
+                id: 'sc_' + Date.now(),
+                name: name,
+                url: url,
+                iconType: selectedIconType,
+                iconData: iconData
+            };
+
+            shortcuts.push(newShortcut);
+            saveToStorage();
+            renderShortcuts();
+            closeModal();
+        }
+
+        // Inicializar al cargar
+        window.onload = loadShortcuts;
+    </script>
+</body>
+
+</html>

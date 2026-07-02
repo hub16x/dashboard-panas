@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Minimalista de 3 Enlaces</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: "Inter", -apple-system, sans-serif;
+            background-color: transparent;
+            /* Permite visualizar el fondo original */
+            color: #e2edfd;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Contenedor principal centrado vertical y horizontalmente */
+        .dashboard-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        .giant-grid {
+            grid-template-columns: repeat(3, 1fr);
+            margin: 32px;
+            width: 100%;
+            max-width: 1050px;
+        }
+
+        /* Tarjeta Gigante */
+        .giant-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(8, 18, 36, 0.5), rgba(4, 9, 20, 0.7));
+            border: 1px solid rgba(0, 180, 216, 0.15);
+            border-top-color: rgba(0, 237, 245, 0.25);
+            border-radius: 32px;
+            height: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        .giant-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #00edf5;
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.65),
+                0 0 35px rgba(0, 180, 216, 0.35);
+        }
+
+        /* Contenedor del Icono Gigante */
+        .giant-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            background: rgba(0, 180, 216, 0.08);
+            border: 1px solid rgba(0, 180, 216, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 24px;
+        }
+
+        .giant-card:hover .giant-icon {
+            border-color: #00edf5;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 237, 245, 0.25);
+        }
+
+        .giant-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .giant-icon i {
+            font-size: 48px;
+            color: #00edf5;
+        }
+
+        /* Nombre del enlace gigante */
+        .giant-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: rgba(163, 229, 255, 0.9);
+            letter-spacing: 0.5px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            text-align: center;
+            transition: color 0.2s;
+        }
+
+        .giant-card:hover .giant-name {
+            color: #ffffff;
+        }
+
+        /* Adaptación móvil */
+        @media (max-width: 768px) {
+
+            body,
+            html {
+                overflow-y: auto;
+            }
+
+            .dashboard-wrapper {
+                justify-content: center;
+                padding-top: 40px;
+            }
+
+            .giant-grid {
+                grid-template-columns: 1fr;
+                max-width: 360px;
+                gap: 24px;
+            }
+
+            .giant-card {
+                height: 240px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <div class="giant-grid">
+            <a class="giant-card" href="ropianu" target="_blank">
+                <div class="giant-icon">
+                    <img src="https://www.google.com/s2/favicons?sz=128&domain=google.com"
+                        onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<i class=\'ri-global-line\'></i>'">
+                </div>
+                <div class="giant-name">ropianu</div>
+            </a>
+            <a class="giant-card" href="cobalt" target="_blank">
+                <div class="giant-icon">
+                    <img src="https://www.google.com/s2/favicons?sz=128&domain=youtube.com"
+                        onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<i class=\'ri-global-line\'></i>'">
+                </div>
+                <div class="giant-name">ORGINIAL</div>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

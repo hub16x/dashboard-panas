@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script src="main.js" async></script>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COBALT ®øÐ®ıªnФ BRØ - ropianu edition</title>
+</head>
+
+<body id="drop-area">
+    <div class="master-grid">
+        <div class="glass-panel">
+            <h1>ls -d ~/videos */</h1>
+            <input type="text" id="folder-in" placeholder="NAME">
+            <button onclick="addFolder()" style="width: 100%;">mkdir</button>
+            <div class="scroll" id="folders" style="margin-top:15px"></div>
+        </div>
+
+        <div class="glass-panel player-center">
+            <h1 style="font-size: 1.2rem;">chronos@cret360_rev4 / $</h1>
+            <h2 id="playing-title" style="font-size: 10px; color: var(--accent); height: 15px;">Esperando archivos...
+            </h2>
+
+            <div class="viz-container">
+                <div class="video-circle" id="v-circle">
+                    <video id="v-player" controls="anonymous"></video>
+                    <canvas id="viz-canvas"></canvas>
+                </div>
+            </div>
+
+            <div class="progress-bar" id="p-bar" onclick="seek(event)">
+                <div class="progress-fill" id="p-fill"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="changeTrack(-1)">PREV</button>
+                <button id="play-btn" onclick="togglePlay()">PLAY</button>
+                <button onclick="changeTrack(1)">NEXT</button>
+                <button id="shuffle-btn" onclick="toggleShuffle()">SHUFFLE: OFF</button>
+
+                <div class="vol-container">
+                    <span>VOL</span>
+                    <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="1">
+                </div>
+
+                <label for="file-up"
+                    style="cursor:pointer; background:#fff; padding:12px 18px; border-radius:12px; font-size:10px; font-weight:900; color:#000">SUBIR</label>
+                <input type="file" id="file-up" hidden multiple accept="audio/*,video/*">
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h1>ls -p ~/videos | grep -v /</h1>
+            <input type="text" id="search-in" placeholder="GREP" oninput="render()">
+            <div class="scroll" id="tracks"></div>
+            <button onclick="clearDB()"
+                style="margin-top:10px; background:transparent; color:#ff4444; border:1px solid #ff4444; width:100%">rm
+                -rf ~/videos</button>
+        </div>
+    </div>
+</body>
+
+</html>

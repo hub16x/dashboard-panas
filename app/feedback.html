@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Rat Games Feedback</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg0:#1a1008;
+    --bg1:#1a0e05;
+    --bg2:#2b1a0e;
+
+    --panel: rgba(255,235,200,0.10);
+    --panel2: rgba(255,235,200,0.06);
+    --stroke: rgba(255,235,200,0.16);
+    --stroke2: rgba(255,235,200,0.10);
+
+    --text: rgba(240,224,200,0.92);
+    --muted: rgba(240,224,200,0.68);
+
+    --input: rgba(0,0,0,0.22);
+    --input2: rgba(255,235,200,0.06);
+
+    --accent:#c0622f;
+    --accentSoft: rgba(192,98,47,0.18);
+
+    --star-yellow:#ffcc66;
+
+    --ease: cubic-bezier(.18,.98,.22,1);
+    --speed: 220ms;
+
+    --mx: 50vw;
+    --my: 50vh;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, Arial, sans-serif;
+    color: var(--text);
+    overflow:hidden;
+    background: transparent;
+    position:relative;
+  }
+
+  /* Warm overlay */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:rgba(20,10,4,0.55);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .grid{
+    position:fixed; inset:0; pointer-events:none;
+    opacity:.20;
+    background:
+      repeating-linear-gradient(to right, rgba(255,255,255,.10) 0px, rgba(255,255,255,.10) 1px, transparent 1px, transparent 74px),
+      repeating-linear-gradient(to bottom, rgba(255,255,255,.10) 0px, rgba(255,255,255,.10) 1px, transparent 1px, transparent 74px);
+    mask-image: radial-gradient(circle at 50% 45%, rgba(0,0,0,.92), rgba(0,0,0,.35) 55%, rgba(0,0,0,0) 78%);
+    z-index:1;
+  }
+
+  .grain{
+    position:fixed; inset:0; pointer-events:none;
+    opacity:.10;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    background-size: 240px 240px;
+    z-index:1;
+  }
+
+  .wrap{
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 18px;
+    position:relative;
+    z-index:2;
+  }
+
+  .panel{
+    width:100%;
+    max-width: 480px;
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid var(--stroke);
+    background: linear-gradient(180deg, rgba(255,235,200,0.14), rgba(255,235,200,0.07));
+    box-shadow:
+      0 28px 110px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(255,235,200,0.06) inset,
+      0 0 70px rgba(192,98,47,0.12);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    transform: translateY(10px) scale(.98);
+    opacity: 0;
+    filter: blur(10px);
+    animation: popIn 680ms var(--ease) forwards 70ms;
+    position:relative;
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";
+    position:absolute; inset:-60%;
+    background: conic-gradient(from 120deg,
+      rgba(192,98,47,0.30),
+      rgba(220,130,80,0.18),
+      rgba(255,235,200,0.14),
+      rgba(192,98,47,0.30)
+    );
+    filter: blur(30px);
+    opacity:.55;
+    pointer-events:none;
+  }
+  .panelInner{ position:relative; z-index:2; }
+
+  @keyframes popIn{
+    to{ opacity:1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+
+  .header{
+    display:flex;
+    flex-direction:column;
+    gap: 6px;
+    text-align:center;
+    padding: 6px 6px 10px;
+  }
+  h2{
+    margin:0;
+    font-size: 20px;
+    letter-spacing: .2px;
+    font-weight: 900;
+    color: rgba(240,224,200,0.94);
+  }
+  .sub{
+    margin:0;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  .form{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    padding-top: 6px;
+  }
+
+  label{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    font-size: 12.5px;
+    font-weight: 900;
+    color: rgba(240,224,200,0.84);
+    margin-top: 2px;
+  }
+  label small{
+    font-weight: 700;
+    font-size: 11.5px;
+    color: rgba(240,224,200,0.62);
+  }
+
+  .field{
+    border-radius: 16px;
+    border: 1px solid var(--stroke2);
+    background: rgba(0,0,0,0.18);
+    box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+    overflow:hidden;
+    transition: transform var(--speed) var(--ease), border-color var(--speed) var(--ease), background var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+  }
+  .field:focus-within{
+    transform: translateY(-2px);
+    border-color: rgba(192,98,47,0.45);
+    background: rgba(0,0,0,0.12);
+    box-shadow: 0 22px 56px rgba(0,0,0,0.44);
+  }
+
+  input[type="email"], textarea{
+    width:100%;
+    padding: 12px 14px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: rgba(240,224,200,0.92);
+    font-size: 14px;
+    letter-spacing: .1px;
+  }
+  input::placeholder, textarea::placeholder{ color: rgba(240,224,200,0.45); }
+  textarea{ height: 110px; resize:none; line-height: 1.35; }
+
+  .types{ display:flex; gap: 10px; }
+  .tbtn{
+    flex:1;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid var(--stroke2);
+    background: rgba(0,0,0,0.14);
+    color: rgba(240,224,200,0.72);
+    cursor:pointer;
+    font-weight: 900;
+    font-size: 13px;
+    transition: transform var(--speed) var(--ease), border-color var(--speed) var(--ease), background var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+    user-select:none;
+    position:relative;
+    overflow:hidden;
+  }
+  .tbtn::before{
+    content:"";
+    position:absolute; inset:-60%;
+    background:
+      radial-gradient(520px 260px at 30% 30%, rgba(192,98,47,0.22), transparent 60%),
+      radial-gradient(520px 260px at 70% 70%, rgba(220,130,80,0.16), transparent 60%);
+    filter: blur(18px);
+    opacity: 0;
+    transition: opacity var(--speed) var(--ease);
+    pointer-events:none;
+  }
+  .tbtn:hover{ transform: translateY(-2px); box-shadow: 0 14px 34px rgba(0,0,0,0.32); }
+  .tbtn:hover::before{ opacity: .65; }
+
+  .tbtn.active{
+    background: linear-gradient(180deg, rgba(192,98,47,0.22), rgba(0,0,0,0.14));
+    border-color: rgba(192,98,47,0.55);
+    color: rgba(240,224,200,0.92);
+    box-shadow: 0 16px 42px rgba(192,98,47,0.12);
+  }
+
+  .starsWrap{
+    border-radius: 16px;
+    border: 1px solid var(--stroke2);
+    background: rgba(0,0,0,0.14);
+    padding: 10px 10px 12px;
+    box-shadow: 0 18px 46px rgba(0,0,0,0.35);
+    transition: transform var(--speed) var(--ease), border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+  }
+  .starsWrap:hover{
+    transform: translateY(-2px);
+    border-color: rgba(192,98,47,0.36);
+    box-shadow: 0 22px 56px rgba(0,0,0,0.44);
+  }
+  .stars{
+    display:flex;
+    justify-content:center;
+    gap: 10px;
+    font-size: 44px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .star{
+    color: rgba(255,255,255,0.18);
+    transition: transform 140ms var(--ease), color 140ms var(--ease), text-shadow 140ms var(--ease), filter 140ms var(--ease);
+    line-height: 1;
+    display:inline-block;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35));
+  }
+  .star:hover{ transform: scale(1.14) rotate(-2deg); text-shadow: 0 0 12px rgba(192,98,47,0.22); }
+  .star.selected{
+    color: var(--star-yellow);
+    text-shadow: 0 0 16px rgba(255,204,102,0.38);
+    transform: scale(1.06);
+  }
+  .ratingHint{
+    text-align:center;
+    font-size: 12px;
+    color: rgba(240,224,200,0.62);
+    margin-top: 6px;
+  }
+
+  .submit{
+    width:100%;
+    height: 48px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    cursor:pointer;
+    font-weight: 950;
+    letter-spacing: .2px;
+    font-size: 15px;
+    color: rgba(0,12,20,0.96);
+    background:
+      radial-gradient(520px 240px at 30% 30%, rgba(255,255,255,0.20), transparent 60%),
+      linear-gradient(180deg, rgba(192,98,47,0.98), rgba(150,70,30,0.92));
+    box-shadow:
+      0 22px 60px rgba(0,0,0,0.40),
+      0 0 42px rgba(192,98,47,0.20);
+    transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease), filter var(--speed) var(--ease);
+    user-select:none;
+    position:relative;
+    overflow:hidden;
+  }
+  .submit::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    transform: translateX(-120%);
+    transition: transform 520ms var(--ease);
+    pointer-events:none;
+  }
+  .submit:hover{
+    transform: translateY(-2px) scale(1.01);
+    filter: saturate(1.05);
+    box-shadow:
+      0 28px 74px rgba(0,0,0,0.48),
+      0 0 52px rgba(192,98,47,0.24);
+  }
+  .submit:hover::after{ transform: translateX(120%); }
+  .submit:active{ transform: translateY(0) scale(.99); }
+  .submit[disabled]{ opacity:.65; cursor:not-allowed; filter: grayscale(.2); }
+
+  .done{
+    display:none;
+    text-align:center;
+    padding: 34px 12px 28px;
+  }
+  .done strong{
+    display:block;
+    font-size: 20px;
+    color: rgba(240,224,200,0.94);
+    margin-bottom: 8px;
+  }
+  .done span{
+    display:block;
+    color: rgba(240,224,200,0.68);
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .doneBtn{
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid var(--stroke2);
+    background: rgba(0,0,0,0.14);
+    color: rgba(240,224,200,0.92);
+    cursor:pointer;
+    font-weight: 900;
+    transition: transform var(--speed) var(--ease), border-color var(--speed) var(--ease), background var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+  }
+  .doneBtn:hover{
+    transform: translateY(-2px) rotate(-1deg);
+    border-color: rgba(192,98,47,0.40);
+    background: rgba(0,0,0,0.10);
+    box-shadow: 0 14px 36px rgba(0,0,0,0.36);
+  }
+
+  @media (max-width:420px){
+    .panel{ padding: 12px; border-radius: 18px; }
+    .stars{ font-size: 38px; gap: 8px; }
+  }
+</style>
+</head>
+
+<body>
+  <div class="grid"></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
+    <div class="panel" id="panel">
+      <div class="panelInner">
+        <div class="header">
+          <h2>Share Your Thoughts</h2>
+          <p class="sub">Quick feedback or a game request — it sends straight to the webhook.</p>
+        </div>
+
+        <div class="form" id="form">
+          <div>
+            <label for="email">1. Email <small>(optional)</small></label>
+            <div class="field">
+              <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+          </div>
+
+          <div>
+            <label>2. Which one</label>
+            <div class="types" role="tablist" aria-label="Type selector">
+              <button class="tbtn active" data-type="Feedback" type="button">Feedback</button>
+              <button class="tbtn" data-type="Request Game" type="button">Request</button>
+            </div>
+          </div>
+
+          <div>
+            <label for="message">3. Thoughts</label>
+            <div class="field">
+              <textarea id="message" placeholder="Tell me what you think"></textarea>
+            </div>
+          </div>
+
+          <div>
+            <label>4. Rate <small>(1–5)</small></label>
+            <div class="starsWrap">
+              <div class="stars" id="stars" role="radiogroup" aria-label="Rate 1 to 5">
+                <span class="star" role="radio" aria-checked="false" tabindex="0" data-value="1">★</span>
+                <span class="star" role="radio" aria-checked="false" tabindex="0" data-value="2">★</span>
+                <span class="star" role="radio" aria-checked="false" tabindex="0" data-value="3">★</span>
+                <span class="star" role="radio" aria-checked="false" tabindex="0" data-value="4">★</span>
+                <span class="star" role="radio" aria-checked="false" tabindex="0" data-value="5">★</span>
+              </div>
+              <div class="ratingHint" id="ratingHint">No rating yet</div>
+            </div>
+          </div>
+
+          <button class="submit" id="submitBtn">Submit Feedback</button>
+        </div>
+
+        <div class="done" id="done">
+          <strong>We got your request.</strong>
+          <span>Thanks — it's been sent. You can submit another one if you want.</span>
+          <button class="doneBtn" id="againBtn" type="button">Send another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  const root = document.documentElement;
+  let raf = 0, nx = innerWidth/2, ny = innerHeight/2;
+  function schedule(){
+    if (raf) return;
+    raf = requestAnimationFrame(()=>{
+      raf = 0;
+      root.style.setProperty("--mx", nx + "px");
+      root.style.setProperty("--my", ny + "px");
+    });
+  }
+  addEventListener("mousemove", (e)=>{ nx=e.clientX; ny=e.clientY; schedule(); }, {passive:true});
+  addEventListener("touchmove", (e)=>{ nx=e.touches[0].clientX; ny=e.touches[0].clientY; schedule(); }, {passive:true});
+
+  const emailEl = document.getElementById('email');
+  const msgEl = document.getElementById('message');
+  const tbtns = Array.from(document.querySelectorAll('.tbtn'));
+  const stars = Array.from(document.querySelectorAll('.star'));
+  const submitBtn = document.getElementById('submitBtn');
+  const form = document.getElementById('form');
+  const done = document.getElementById('done');
+  const againBtn = document.getElementById('againBtn');
+  const ratingHint = document.getElementById('ratingHint');
+
+  let selectedType = 'Feedback';
+  tbtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tbtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedType = btn.dataset.type || 'Feedback';
+      submitBtn.textContent = selectedType === "Request Game" ? "Submit Request" : "Submit Feedback";
+    });
+  });
+
+  let rating = 0;
+
+  function paintStars(v){
+    stars.forEach(x => {
+      const on = Number(x.dataset.value) <= v;
+      x.classList.toggle('selected', on);
+      x.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  }
+  function setRating(v){
+    rating = v;
+    paintStars(rating);
+    ratingHint.textContent = rating ? (rating === 1 ? "1 star" : `${rating} stars`) : "No rating yet";
+  }
+
+  stars.forEach(s => {
+    const v = Number(s.dataset.value);
+    s.addEventListener('click', () => setRating(v));
+    s.addEventListener('mouseover', () => paintStars(v));
+    s.addEventListener('mouseout', () => paintStars(rating));
+    s.addEventListener('keydown', (e)=>{
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setRating(v); }
+      if (e.key === "ArrowRight" || e.key === "ArrowUp") { e.preventDefault(); setRating(Math.min(5, rating+1 || 1)); stars[(rating-1)].focus(); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowDown") { e.preventDefault(); setRating(Math.max(1, rating-1 || 1)); stars[(rating-1)].focus(); }
+      if (e.key === "Escape") { e.preventDefault(); setRating(0); }
+    });
+  });
+
+  const WEBHOOK = "https://discord.com/api/webhooks/1448520446344695808/ptGc1DTCUXAa08yV0wvpnkllo4oGIT7W2vKPnRyEJKlPZrU1fiHI76Du5mGXlens_9ec";
+
+  function lockForm(lock){
+    submitBtn.disabled = lock;
+    submitBtn.textContent = lock ? "Sending..." : (selectedType === "Request Game" ? "Submit Request" : "Submit Feedback");
+    [emailEl, msgEl, ...tbtns, ...stars].forEach(el => {
+      if (!el) return;
+      el.style.pointerEvents = lock ? "none" : "";
+      el.style.opacity = lock ? "0.88" : "";
+    });
+  }
+
+  async function send(){
+    const email = (emailEl.value || "").trim();
+    const message = (msgEl.value || "").trim();
+
+    const payload = {
+      content: "**New Website Feedback**",
+      embeds: [{
+        title: selectedType,
+        color: 1084165,
+        fields: [
+          { name: "Email", value: email || "No email provided" },
+          { name: "Message", value: message || "No message" },
+          { name: "Rating", value: rating ? `${rating} / 5` : "No rating" }
+        ]
+      }]
+    };
+
+    lockForm(true);
+
+    try{
+      await fetch(WEBHOOK, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload)
+      });
+    }catch(e){
+
+    }finally{
+      form.style.display = "none";
+      done.style.display = "block";
+      lockForm(false);
+    }
+  }
+
+  submitBtn.addEventListener('click', send);
+
+  againBtn.addEventListener('click', ()=>{
+    emailEl.value = "";
+    msgEl.value = "";
+
+    tbtns.forEach(b=>b.classList.remove('active'));
+    tbtns[0].classList.add('active');
+    selectedType = "Feedback";
+    submitBtn.textContent = "Submit Feedback";
+
+    setRating(0);
+
+    done.style.display = "none";
+    form.style.display = "flex";
+    emailEl.focus();
+  });
+
+  setRating(0);
+</script>
+</body>
+</html>

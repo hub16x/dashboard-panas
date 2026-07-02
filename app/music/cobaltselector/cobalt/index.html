@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <script src="main.js" async></script>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COBALT ®øÐ®ıªnФ BRØ - TERMINAL_EDITION</title>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo" onclick="location.reload()">[ COBALT_VAULT_v2.5 ]_</div>
+        <div class="controls">
+            <button class="btn" style="border-color: #00ffcc; color: #00ffcc;"
+                onclick="loadFromStorage()">SYNC_LOAD</button>
+            <button class="btn" style="border-color: #ff0055; color: #ff0055;" onclick="fetchUrl()">FETCH_URL</button>
+            <button class="btn" onclick="clearLibrary()">WIPE</button>
+            <label class="btn"> VIDEO <input type="file" id="files" accept="video/*" multiple hidden></label>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <div id="home-view">
+            <div class="video-grid" id="grid">
+                <div id="empty-msg" style="grid-column:1/-1; text-align:center; margin-top:15vh; opacity:0.4">
+                    <h2>> VAULT_IDLE...</h2>
+                    <p>Esperando carga de datos o SYNC_LOAD.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="player-view">
+            <div class="video-side">
+                <button class="btn" onclick="closePlayer()" style="width: 80px; margin-bottom: 15px;">BACK</button>
+
+                <div class="video-wrapper scanlines">
+                    <video id="main-vid" autoplay controls crossorigin="anonymous"></video>
+                </div>
+
+                <div class="terminal-progress-container">
+                    <span style="font-size: 0.7rem;">PROG:</span>
+                    <div class="terminal-progress" onclick="seekVideo(event)">
+                        <div id="p-fill"></div>
+                    </div>
+                    <span id="p-perc">0%</span>
+                </div>
+
+                <h1 id="v-tit">> NO_SIGNAL</h1>
+
+                <div class="terminal-controls">
+                    <div class="control-group">
+                        <span id="vol-label">> VOL: 100%</span>
+                        <input type="range" id="vol-slider" min="0" max="1" step="0.01" value="1"
+                            oninput="updateVol(this.value)">
+                    </div>
+                    <div class="control-group">
+                        <span id="speed-label">> RATE: 1.0x</span>
+                        <input type="range" id="speed-slider" min="0.5" max="16" step="0.5" value="1"
+                            oninput="updateSpeed(this.value)">
+                    </div>
+                    <button class="btn" id="mute-btn" onclick="toggleMute()">MUTE: OFF</button>
+                </div>
+            </div>
+            <div class="recommendations-side" id="side-list"></div>
+        </div>
+    </div>
+</body>
+
+</html>
