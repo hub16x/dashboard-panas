@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder / Decoder</title>
+    
+    <!-- Importación de Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reseteo y Transparencia Absoluta */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            /* Aplicación de la Fuente Inter */
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            background: transparent !important;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        /* Contenedor Principal */
+        .converter-container {
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Título Neomórfico/Brillante */
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, #ff7b00, #ffae00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Áreas de Texto */
+        .text-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            /* Usamos una fuente mono moderna para el código que combina con Inter */
+            font-family: 'JetBrains+Mono', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #ffae00;
+            background: rgba(0, 0, 0, 0.35);
+            box-shadow: 0 0 12px rgba(255, 174, 0, 0.15);
+        }
+
+        /* Controles y Botones */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.3s ease, background 0.3s ease;
+            color: #111;
+        }
+
+        .btn-encode {
+            background: linear-gradient(135deg, #ffae00, #ff7b00);
+        }
+
+        .btn-decode {
+            background: transparent;
+            color: #ffae00;
+            border: 1px solid rgba(255, 174, 0, 0.5);
+        }
+
+        .btn-decode:hover {
+            border-color: #ffae00;
+            background: rgba(255, 174, 0, 0.05);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 174, 0, 0.25);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 0.4;
+        }
+
+        .btn-clear:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Mensaje de error */
+        .error-msg {
+            color: #ff4a4a;
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-top: 6px;
+            display: none;
+            letter-spacing: 0.2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="converter-container">
+        <h2>BASE64 CRYPTO STUDIO</h2>
+
+        <div class="text-group">
+            <label for="input-text">Texto Plano / Origen</label>
+            <textarea id="input-text" placeholder="Escribe o pega tu texto aquí..."></textarea>
+        </div>
+
+        <div class="actions">
+            <button class="btn-encode" onclick="processBase64('encode')">Codificar ▲</button>
+            <button class="btn-decode" onclick="processBase64('decode')">Decodificar ▼</button>
+            <button class="btn-clear" onclick="clearFields()">Limpiar</button>
+        </div>
+
+        <div class="text-group">
+            <label for="output-text">Resultado Base64</label>
+            <textarea id="output-text" placeholder="El resultado aparecerá aquí..." readonly></textarea>
+            <div id="error-box" class="error-msg">Cadena Base64 inválida. Verifica el formato.</div>
+        </div>
+    </div>
+
+    <script>
+        function processBase64(action) {
+            const input = document.getElementById('input-text').value;
+            const output = document.getElementById('output-text');
+            const errorBox = document.getElementById('error-box');
+            
+            errorBox.style.display = 'none';
+
+            if (!input.trim()) {
+                output.value = '';
+                return;
+            }
+
+            try {
+                if (action === 'encode') {
+                    output.value = btoa(unescape(encodeURIComponent(input)));
+                } else if (action === 'decode') {
+                    output.value = decodeURIComponent(escape(atob(input)));
+                }
+            } catch (e) {
+                if (action === 'decode') {
+                    errorBox.style.display = 'block';
+                    output.value = '';
+                }
+            }
+        }
+
+        function clearFields() {
+            document.getElementById('input-text').value = '';
+            document.getElementById('output-text').value = '';
+            document.getElementById('error-box').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

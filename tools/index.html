@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio - Cuadrícula Ultra Estable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;550;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 1. REINICIO DE CAJA GLOBAL: Evita que paddings o borders rompan el tamaño */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 24px;
+      width: 100%;
+      min-height: 100vh; /* Permite centrado vertical completo y scroll si es necesario */
+      background-color: transparent !important;
+      font-family: "Inter", -apple-system, sans-serif;
+      overflow-y: auto;
+      /* Centrado del contenedor de herramientas */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Barra de desplazamiento */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 180, 216, 0.3);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 237, 245, 0.6);
+    }
+
+    /* 2. DISEÑO FLEXIBLE CENTRADO Y AUTO-AJUSTABLE */
+    .grid-herramientas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      max-width: 1350px;
+      margin: auto;
+      padding-bottom: 80px;
+      width: 100%;
+    }
+
+    /* Tarjeta exterior */
+    .card-herramienta {
+      background-color: #130f0c;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 22px;
+      padding: 16px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      width: 240px; /* Ancho consistente y proporcional al diseño original */
+      max-width: 100%;
+      cursor: grab; /* Indicador de elemento arrastrable */
+    }
+
+    .card-herramienta:active {
+      cursor: grabbing;
+    }
+
+    /* Estado visual mientras se arrastra */
+    .card-herramienta.dragging {
+      opacity: 0.4;
+      transform: scale(0.95);
+      border-color: rgba(0, 237, 245, 0.3);
+    }
+
+    .card-herramienta:hover:not(.dragging) {
+      transform: translateY(-4px) scale(1.02);
+      border-color: rgba(0, 237, 245, 0.25);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 3. CONTENEDOR DE IMAGEN ULTRA ESTABLE (Proporción 1:1 garantizada) */
+    .img-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background-color: #231c18; /* Fondo gris/marrón oscuro por si la imagen es transparente */
+      display: block;
+    }
+
+    /* 4. AJUSTE DE IMAGEN RESILIENTE: No se deforma sin importar la resolución original */
+    .img-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Escala y recorta preservando la proporción original */
+      object-position: center; /* Centra el encuadre del recorte */
+      display: block;
+      border-radius: 18px;
+      transition: transform 0.4s ease;
+    }
+
+    /* Contenedor del texto inferior */
+    .card-info {
+      margin-top: 14px;
+      width: 100%;
+      text-align: center;
+      min-height: 20px; /* Evita saltos de diseño si no hay texto temporalmente */
+    }
+
+    /* Estilo del título del herramienta con prevención de desbordamiento */
+    .game-title {
+      color: #eae6df;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; /* Corta el texto largo limpiamente con "..." */
+      width: 100%;
+      display: block;
+    }
+
+    .card-herramienta:hover .game-title {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-herramientas">
+
+    <!-- herramienta: % De batería - REAL (Ejemplo con imagen perfectamente cuadrada) -->
+    <a href="calibrador.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/calibrador.webp" alt="% De batería - REAL" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">% De batería - REAL</h3>
+      </div>
+    </a>
+
+    <!-- herramienta: Base64 CODIFICAR/DESCODIFICAR (Ejemplo con imagen rectangular o de otra resolución) -->
+    <a href="base64.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/base64.png" alt="Base64 CODIFICAR/DESCODIFICAR" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">Base64 CODIFICAR/DESCODIFICAR</h3>
+      </div>
+    </a>
+
+    <!-- herramienta: Generar enlace data: -->
+    <a href="data.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/data.png" alt="Generar enlace data:" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">Generar enlace data:</h3>
+      </div>
+    </a>
+
+    <!-- herramienta: CLASH ROYALE -->
+    <a href="productividad.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/productividad.png" alt="Productividad" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">Productividad</h3>
+      </div>
+    </a>
+
+    <!-- herramienta: EA SPORTS FC MOBILE -->
+    <a href="drive-mad.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/drive-mad.webp" alt="Drive Mad" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">Drive Mad</h3>
+      </div>
+    </a>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.querySelector('.grid-herramientas');
+      const cards = [...container.querySelectorAll('.card-herramienta')];
+      
+      // 1. Restaurar el orden guardado en el localStorage
+      const savedOrder = localStorage.getItem('herramientas_order');
+      if (savedOrder) {
+        try {
+          const orderedHrefs = JSON.parse(savedOrder);
+          orderedHrefs.forEach(href => {
+            const card = cards.find(c => c.getAttribute('href') === href);
+            if (card) {
+              container.appendChild(card);
+            }
+          });
+        } catch (e) {
+          console.error("No se pudo restaurar el orden previo:", e);
+        }
+      }
+
+      // 2. Configurar eventos de arrastre en cada elemento
+      const activeCards = [...container.querySelectorAll('.card-herramienta')];
+      activeCards.forEach(card => {
+        card.setAttribute('draggable', 'true');
+
+        card.addEventListener('dragstart', (e) => {
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          
+          // Guardar el nuevo orden actualizando el localStorage
+          const currentCards = [...container.querySelectorAll('.card-herramienta')];
+          const newOrder = currentCards.map(c => c.getAttribute('href'));
+          localStorage.setItem('herramientas_order', JSON.stringify(newOrder));
+        });
+      });
+
+      // 3. Controlar la lógica de reorganización visual durante el arrastre
+      container.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const draggable = document.querySelector('.dragging');
+        if (!draggable) return;
+
+        const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
+        if (afterElement == null) {
+          container.appendChild(draggable);
+        } else {
+          container.insertBefore(draggable, afterElement);
+        }
+      });
+    });
+
+    // Calcula de forma precisa la posición relativa del elemento arrastrado en un plano 2D
+    function getDragAfterElement(container, x, y) {
+      const draggableElements = [...container.querySelectorAll('.card-herramienta:not(.dragging)')];
+
+      let closestElement = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      draggableElements.forEach(child => {
+        const rect = child.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.hypot(x - centerX, y - centerY);
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestElement = child;
+        }
+      });
+
+      if (!closestElement) return null;
+
+      const rect = closestElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+
+      // Determina si se inserta antes o después del elemento evaluado
+      if (x > centerX) {
+        return closestElement.nextElementSibling;
+      } else {
+        return closestElement;
+      }
+    }
+  </script>
+</body>
+</html>

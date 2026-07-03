@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script src="main.js" async></script>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Studio</title>
+</head>
+
+<body id="drop-area">
+
+
+    <div class="master-grid">
+        <div class="glass-panel">
+            <h1>PLAYLISTS</h1>
+            <input type="text" id="folder-in" placeholder="Nueva lista...">
+            <button onclick="addFolder()" style="width: 100%;">+ CREAR</button>
+            <div class="scroll" id="folders" style="margin-top:15px"></div>
+        </div>
+
+
+        <div class="glass-panel player-center">
+            <h1 id="playing-title">SISTEMA INTELIGENTE ACTIVO</h1>
+            <div class="viz-container">
+                <div class="video-circle" id="v-circle"><video id="v-player" crossorigin="anonymous"></video></div>
+            </div>
+            <div class="progress-bar" id="p-bar">
+                <div class="progress-fill" id="p-fill"></div>
+            </div>
+            <div class="controls">
+                <button onclick="changeTrack(-1)">PREV</button>
+                <button id="play-btn">PLAY</button>
+                <button onclick="changeTrack(1)">NEXT</button>
+                <button id="shuffle-btn" onclick="toggleShuffle()">SHUFFLE: OFF</button>
+                <label for="file-up"
+                    style="cursor:pointer; background:#fff; padding:12px 18px; border-radius:12px; font-size:10px; font-weight:900; color:#000">SUBIR</label>
+                <input type="file" id="file-up" hidden multiple accept="audio/*,video/*">
+            </div>
+            <div class="boost-module">
+                <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 10px;">MASTER BOOST</span>
+                    <span class="b-val" id="b-num">100%</span>
+                </div>
+                <input type="range" id="b-slider" min="0" max="10" step="0.1" value="1">
+            </div>
+        </div>
+
+
+        <div class="glass-panel">
+            <h1>BIBLIOTECA</h1>
+            <input type="text" id="search-in" placeholder="Buscar..." oninput="render()">
+            <div class="scroll" id="tracks"></div>
+            <button onclick="clearDB()"
+                style="margin-top:10px; background:transparent; color:#ff4444; border:1px solid #ff4444; width:100%">WIPE
+                DB</button>
+        </div>
+    </div>
+</body>
+
+</html>

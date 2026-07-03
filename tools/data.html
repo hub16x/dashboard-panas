@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data URL Studio Pro</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            background: transparent !important;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .converter-container {
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, #00ffcc, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .grid-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .file-upload-zone {
+            flex: 1;
+            position: relative;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 9px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.01);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-zone:hover, .file-upload-zone.dragover {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        .file-upload-zone span {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .file-upload-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .text-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #00ffcc;
+        }
+
+        /* Bloque de éxito para strings masivos */
+        .success-card {
+            display: none;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 255, 204, 0.04);
+            border: 1px dashed rgba(0, 255, 204, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .success-card p {
+            font-size: 0.9rem;
+            color: #00ffcc;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .success-card span {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-encode {
+            flex: 1;
+            background: linear-gradient(135deg, #00ffcc, #00aaff);
+            color: #05101a;
+        }
+
+        .btn-copy-massive {
+            background: #00ffcc;
+            color: #05101a;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            margin: 0 auto;
+            display: inline-block;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 255, 204, 0.2);
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 0.3;
+        }
+
+        .filename-badge {
+            font-size: 0.75rem;
+            color: #00ffcc;
+            margin-top: 4px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="converter-container">
+        <h2>DATA URL STUDIO</h2>
+
+        <div class="grid-controls">
+            <div class="control-group">
+                <label for="mime-type">Tipo de Formato</label>
+                <select id="mime-type" onchange="resetFile()">
+                    <option value="text/html">HTML (text/html)</option>
+                    <option value="text/css">CSS (text/css)</option>
+                    <option value="application/javascript">JavaScript (application/javascript)</option>
+                    <option value="text/plain">Plain Text (text/plain)</option>
+                    <option value="application/json">JSON (application/json)</option>
+                </select>
+            </div>
+
+            <div class="file-upload-zone" id="drop-zone">
+                <span id="upload-text">📁 Suelta o selecciona imagen</span>
+                <input type="file" id="file-input" accept="image/*" onchange="handleFile(this.files[0])">
+                <div id="filename" class="filename-badge"></div>
+            </div>
+        </div>
+
+        <div class="text-group" id="input-wrapper">
+            <label id="label-mode" for="input-text">Contenido Origen</label>
+            <textarea id="input-text" placeholder="Escribe tu código o texto aquí..."></textarea>
+        </div>
+
+        <div class="success-card" id="success-view">
+            <p>¡Data URL generado correctamente!</p>
+            <span id="string-info">0 caracteres listos en buffer seguro.</span>
+            <button class="btn-copy-massive" id="btn-copy" onclick="copyToClipboard()">Copiar al Portapapeles 📋</button>
+        </div>
+
+        <div class="actions" id="actions-wrapper">
+            <button class="btn-encode" onclick="generateDataURL()">Generar Data URL ▲</button>
+            <button class="btn-clear" onclick="clearFields()">Limpiar</button>
+        </div>
+    </div>
+
+    <script>
+        let globalRawResult = "";
+        let activeFile = null;
+
+        const dropZone = document.getElementById('drop-zone');
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+        });
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if(dt.files.length) handleFile(dt.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                alert('Formato de imagen no válido.');
+                return;
+            }
+            activeFile = file;
+            document.getElementById('upload-text').innerText = "✅ Imagen Lista";
+            document.getElementById('filename').innerText = `${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+            document.getElementById('filename').style.display = 'block';
+            
+            // Ocultar textareas obsoletos inmediatamente
+            document.getElementById('input-wrapper').style.display = 'none';
+        }
+
+        function resetFile() {
+            activeFile = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('upload-text').innerText = "📁 Suelta o selecciona imagen";
+            document.getElementById('filename').style.display = 'none';
+            document.getElementById('input-wrapper').style.display = 'block';
+            document.getElementById('input-text').value = '';
+        }
+
+        function generateDataURL() {
+            const successView = document.getElementById('success-view');
+            const inputWrapper = document.getElementById('input-wrapper');
+            const actionsWrapper = document.getElementById('actions-wrapper');
+            const stringInfo = document.getElementById('string-info');
+            
+            if (activeFile) {
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    globalRawResult = reader.result;
+                    
+                    // Mostramos la interfaz limpia de descarga
+                    inputWrapper.style.display = 'none';
+                    actionsWrapper.style.display = 'none';
+                    stringInfo.innerText = `${globalRawResult.length.toLocaleString()} caracteres cargados de forma íntegra.`;
+                    successView.style.display = 'block';
+                }
+                reader.readAsDataURL(activeFile);
+            } else {
+                const input = document.getElementById('input-text').value;
+                const mime = document.getElementById('mime-type').value;
+
+                if (!input.trim()) return;
+
+                const base64Str = btoa(unescape(encodeURIComponent(input)));
+                globalRawResult = `data:${mime};base64,${base64Str}`;
+                
+                inputWrapper.style.display = 'none';
+                actionsWrapper.style.display = 'none';
+                stringInfo.innerText = `${globalRawResult.length.toLocaleString()} caracteres generados de forma íntegra.`;
+                successView.style.display = 'block';
+            }
+        }
+
+        function copyToClipboard() {
+            if (!globalRawResult) return;
+
+            navigator.clipboard.writeText(globalRawResult).then(() => {
+                const copyBtn = document.getElementById('btn-copy');
+                copyBtn.innerText = "¡COPIADO! Preparando siguiente... 🚀";
+                copyBtn.style.background = "#00ff88";
+                
+                // Reset automático tras copiar para poder subir otra imagen instantáneamente
+                setTimeout(() => {
+                    clearFields();
+                }, 1500);
+            }).catch(err => {
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = globalRawResult;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                
+                setTimeout(() => {
+                    clearFields();
+                }, 1500);
+            });
+        }
+
+        function clearFields() {
+            globalRawResult = "";
+            document.getElementById('success-view').style.display = 'none';
+            document.getElementById('input-wrapper').style.display = 'block';
+            document.getElementById('actions-wrapper').style.display = 'flex';
+            
+            const copyBtn = document.getElementById('btn-copy');
+            copyBtn.innerText = "Copiar al Portapapeles 📋";
+            copyBtn.style.background = "#00ffcc";
+            copyBtn.style.color = "#05101a";
+            
+            resetFile();
+        }
+    </script>
+</body>
+</html>

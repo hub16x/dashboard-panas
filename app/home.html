@@ -203,8 +203,6 @@
       </svg>
       <span id="battery-text">Loading... %</span>
     </span>
-
-    <span><a href="https://discord.gg/6Sp3DJMvCU" target="_blank" rel="noopener">Discord</a></span>
   </footer>
   <script>
     // 1. Creamos un array con todos los títulos posibles
@@ -232,13 +230,15 @@
     // Clock with 12-hour format and AM/PM
     function updateTime() {
       const now = new Date();
-      let hh = now.getHours();
-      const ampm = hh >= 12 ? 'PM' : 'AM';
-      hh = hh % 12 || 12; // convert 0 -> 12
+      // Obtenemos la hora en formato 24h (0-23) y le añadimos el cero a la izquierda si es necesario
+      const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}</span><span class="ampm">${ampm}</span>`;
+
+      // Eliminamos las etiquetas de AM/PM
+      document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}</span>`;
     }
+
     setInterval(updateTime, 1000);
     updateTime();
 

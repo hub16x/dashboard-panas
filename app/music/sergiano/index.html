@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script src="main.js" async></script>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAULT $$$$ergianф brфффф // EDICIÓN_GLITCH</title>
+</head>
+
+<body>
+
+    <header>
+        <div style="letter-spacing: 3px; font-weight: bold; color: var(--hacker); text-shadow: 0 0 5px var(--hacker);">
+            VAULT $$ergianф brфффф</div>
+        <div>
+            <label class="btn-header"> + IMPORTAR VIDEO <input type="file" id="files" accept="video/*,audio/*" multiple
+                    hidden></label>
+            <label class="btn-header" style="border-color: var(--gold); color: var(--gold);"> + SUBIR IMAGEN <input
+                    type="file" id="img-file" accept="image/*" hidden></label>
+        </div>
+    </header>
+
+    <div id="image-overlay" onclick="this.style.display='none'">
+        <img id="full-img" src="" alt="Full View">
+    </div>
+
+    <div class="app-shell">
+        <div id="home-view">
+            <div style="margin-bottom: 20px; font-size: 11px; opacity: 0.6; letter-spacing: 2px;">// UNIDADES_DETECTADAS
+                (ALT+Z PARA IMAGEN)</div>
+            <div class="grid-hq" id="grid"></div>
+        </div>
+
+        <div id="player-view">
+            <div class="main-stage">
+                <div style="padding: 15px 40px; cursor: pointer; font-size: 10px; color: var(--hacker);"
+                    onclick="closePlayer()">[ < VOLVER_AL_HUB ]</div>
+                        <div class="video-container" id="v-cont">
+                            <video id="main-vid" controls crossorigin="anonymous"></video>
+                        </div>
+
+                        <div class="panel-controles">
+                            <div class="ctrl-group">
+                                <label>Audio</label>
+                                <button id="mute-btn" class="btn-action" onclick="toggleMute()">MUTE: OFF</button>
+                            </div>
+                            <div class="ctrl-group">
+                                <label>Navegación</label>
+                                <button id="next-btn" class="btn-action" onclick="nextTrack()">SIGUIENTE >></button>
+                            </div>
+                            <div class="ctrl-group">
+                                <label>Velocidad</label>
+                                <input type="range" min="0.5" max="2" step="0.1" value="1"
+                                    oninput="mainVid.playbackRate = this.value">
+                            </div>
+                            <div class="ctrl-group">
+                                <label>Bucle</label>
+                                <button id="loop-btn" class="btn-action" onclick="toggleLoop()">BUCLE: OFF</button>
+                            </div>
+                            <div class="ctrl-group">
+                                <label>Estado</label>
+                                <div id="status" style="font-size: 10px; font-weight: bold; padding-top: 5px;">
+                                    ESPERANDO...</div>
+                            </div>
+                        </div>
+                </div>
+                <div class="side-bar">
+                    <div style="font-size: 10px; margin-bottom: 15px; opacity: 0.5;">PLAYLIST_ACTIVA</div>
+                    <div id="side-list"></div>
+                </div>
+            </div>
+        </div>
+
+</body>
+
+</html>

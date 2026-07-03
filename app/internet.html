@@ -21,6 +21,10 @@
             color: #e2edfd;
             box-sizing: border-box;
             overflow-x: hidden;
+            /* Centrado vertical y horizontal en pantalla */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Scrollbar estilizado */
@@ -42,17 +46,24 @@
         }
 
         .container {
+            width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px 120px 24px;
+            margin: auto;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
         }
 
-        /* Cabecera minimalista */
+        /* Cabecera minimalista centrada */
         .header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             margin-bottom: 40px;
+            width: 100%;
         }
 
         .header h1 {
@@ -72,11 +83,14 @@
             text-shadow: 0 0 10px rgba(0, 237, 245, 0.4);
         }
 
-        /* Grid de accesos directos */
+        /* Contenedor flexible de accesos directos (centrado y auto-ajustable hacia abajo) */
         .shortcut-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         /* Tarjeta de acceso directo */
@@ -95,12 +109,28 @@
             text-decoration: none;
             color: #e2edfd;
             backdrop-filter: blur(25px);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s, box-shadow 0.3s;
             min-height: 150px;
+            width: 150px; /* Ancho fijo para mantener la simetría al envolver */
             box-sizing: border-box;
         }
 
-        .shortcut-card:hover {
+        .shortcut-card:not(.add-card) {
+            cursor: grab;
+        }
+
+        .shortcut-card:not(.add-card):active {
+            cursor: grabbing;
+        }
+
+        /* Estilo visual mientras se arrastra */
+        .shortcut-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+            border: 2px dashed rgba(0, 237, 245, 0.5);
+        }
+
+        .shortcut-card:hover:not(.dragging) {
             transform: translateY(-5px);
             border-color: rgba(0, 237, 245, 0.5);
             box-shadow:
@@ -534,6 +564,23 @@
                 card.href = sc.url;
                 card.target = '_blank';
                 card.id = sc.id;
+                
+                // Configurar drag and drop
+                card.setAttribute('draggable', 'true');
+                
+                card.addEventListener('dragstart', (e) => {
+                    card.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    // Actualizar el orden en el array y guardarlo
+                    const currentCards = [...container.querySelectorAll('.shortcut-card:not(.add-card)')];
+                    const newOrderIds = currentCards.map(c => c.id);
+                    shortcuts.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+                    saveToStorage();
+                });
 
                 // Determinar qué icono usar
                 let iconHtml = '';
@@ -669,8 +716,60 @@
             closeModal();
         }
 
+        // Determina el elemento destino más cercano para el drop
+        function getDragAfterElement(container, x, y) {
+            const draggableElements = [...container.querySelectorAll('.shortcut-card:not(.dragging):not(.add-card)')];
+
+            let closestElement = null;
+            let closestDistance = Number.POSITIVE_INFINITY;
+
+            draggableElements.forEach(child => {
+                const rect = child.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const distance = Math.hypot(x - centerX, y - centerY);
+
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestElement = child;
+                }
+            });
+
+            if (!closestElement) return null;
+
+            const rect = closestElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+
+            // Si arrastramos más a la derecha de la mitad de la tarjeta más cercana, lo colocamos después.
+            if (x > centerX) {
+                return closestElement.nextElementSibling;
+            } else {
+                return closestElement;
+            }
+        }
+
         // Inicializar al cargar
-        window.onload = loadShortcuts;
+        window.onload = () => {
+            loadShortcuts();
+
+            const container = document.getElementById('shortcuts-container');
+            
+            // Evento para rastrear el arrastre por encima del contenedor
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggable = document.querySelector('.dragging');
+                if (!draggable) return;
+
+                const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
+                const addCard = container.querySelector('.add-card');
+
+                if (afterElement == null || afterElement === addCard) {
+                    container.insertBefore(draggable, addCard);
+                } else {
+                    container.insertBefore(draggable, afterElement);
+                }
+            });
+        };
     </script>
 </body>
 
