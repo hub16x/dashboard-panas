@@ -22,7 +22,7 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: 'Courier New', monospace;
+            font-family: Consolas, 'Courier New', monospace;
             overflow: hidden;
         }
 

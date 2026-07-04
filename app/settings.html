@@ -257,20 +257,26 @@
   </footer>
 
   <script>
-
-    // Clock with 12-hour format and AM/PM
     function updateTime() {
       const now = new Date();
-      let hh = now.getHours();
-      const ampm = hh >= 12 ? 'PM' : 'AM';
-      hh = hh % 12 || 12;
+
+      // Horas, minutos y segundos estándar
+      const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
-      document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}</span><span class="ampm">${ampm}</span>`;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
 
+      // Obtenemos los milisegundos y los limitamos a 2 decimales
+      const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
+
+      // Renderizamos la hora incluyendo los decimales
+      document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}.${ms}</span>`;
+    }
+
+    // Cambiamos el intervalo a 16.66...ms para que los decimales fluyan con fluidez
+    setInterval(updateTime, 16.66667);
+
+    // Ejecución inicial
+    updateTime();
     // Battery percentage
     const batteryText = document.getElementById('battery-text');
     if (navigator.getBattery) {
