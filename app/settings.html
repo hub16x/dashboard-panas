@@ -76,19 +76,21 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       gap: 20px;
       background: rgba(0, 0, 0, 0.3);
       padding: 30px 50px;
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 90%;
     }
 
     label {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       cursor: pointer;
       user-select: none;
     }
@@ -104,6 +106,7 @@
       outline: none;
       cursor: pointer;
       transition: 0.3s;
+      flex-shrink: 0;
     }
 
     input[type="checkbox"]::before {
@@ -124,6 +127,68 @@
 
     input[type="checkbox"]:checked::before {
       transform: translateX(22px);
+    }
+
+    /* Test2 subcontrols */
+    .test2-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 5px;
+      padding-left: 12px;
+      border-left: 2px solid var(--accent-color);
+    }
+
+    .test2-panel.active {
+      display: flex;
+    }
+
+    .file-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      background: #c0622f;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #d8733e;
+    }
+
+    .btn-danger {
+      background: #8b2626;
+    }
+
+    .btn-danger:hover {
+      background: #a83232;
+    }
+
+    .slider-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.95rem;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      accent-color: #c0622f;
+      cursor: pointer;
+      flex-grow: 1;
     }
 
     /* Footer */
@@ -219,7 +284,7 @@
       }
 
       label {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         gap: 8px
       }
 
@@ -237,10 +302,51 @@
 </head>
 
 <body>
+
   <h1>Ajustes</h1>
 
   <div class="settings-container">
-    <p>Proximamente...</p>
+    <label>
+      <input type="checkbox" id="test-toggle">
+      Saltar Verificacion de UH (No recomendado) (refresquear para que funcione)
+    </label>
+
+    <label>
+      <input type="checkbox" id="test2-toggle">
+      Modo Seguro
+    </label>
+
+    <div class="test2-panel" id="test2-panel">
+      <div class="file-input-wrapper">
+        <input type="file" id="media-input" accept="image/*,video/*" style="display: none;">
+        <button class="btn" onclick="document.getElementById('media-input').click()">Subir Imagen/Vídeo</button>
+        <button class="btn btn-danger" id="remove-media-btn" style="display: none;">Quitar</button>
+      </div>
+
+      <div class="slider-container">
+        <span>Opacidad:</span>
+        <div class="slider-row">
+          <input type="range" id="opacity-slider" min="0" max="1" step="0.05" value="1">
+          <span id="opacity-val">100%</span>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <span>Tiempo visible:</span>
+        <div class="slider-row">
+          <input type="range" id="visible-time-slider" min="0.1" max="10" step="0.1" value="3.5">
+          <span id="visible-time-val">3.5s</span>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <span>Delay oculto (pantalla visible):</span>
+        <div class="slider-row">
+          <input type="range" id="hidden-time-slider" min="0.1" max="10" step="0.1" value="0.5">
+          <span id="hidden-time-val">0.5s</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -256,28 +362,245 @@
     </span>
   </footer>
 
-  <script>
+ <script>
+    // --- MANEJO DE TEST 1 ---
+    const testToggle = document.getElementById('test-toggle');
+
+    if (localStorage.getItem('bypassUH') === '1') {
+      testToggle.checked = true;
+    }
+
+    testToggle.addEventListener('change', () => {
+      if (testToggle.checked) {
+        localStorage.setItem('bypassUH', '1');
+      } else {
+        localStorage.removeItem('bypassUH');
+      }
+    });
+
+    // --- MANEJO DE OVERLAY GLOBAL (Soporte iframe/parent) ---
+    function getTopDocument() {
+      try {
+        return window.top.document;
+      } catch (e) {
+        return document;
+      }
+    }
+
+    function getOrCreateOverlayContainer() {
+      const topDoc = getTopDocument();
+      let container = topDoc.getElementById('global-media-overlay-container');
+      if (!container) {
+        container = topDoc.createElement('div');
+        container.id = 'global-media-overlay-container';
+        Object.assign(container.style, {
+          position: 'fixed',
+          inset: '0',
+          zIndex: '999999',
+          pointerEvents: 'none',
+          display: 'none',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden'
+        });
+        topDoc.body.appendChild(container);
+      }
+      return container;
+    }
+
+    // --- MANEJO DE TEST 2 ---
+    const test2Toggle = document.getElementById('test2-toggle');
+    const test2Panel = document.getElementById('test2-panel');
+    const mediaInput = document.getElementById('media-input');
+    const removeMediaBtn = document.getElementById('remove-media-btn');
+    
+    const opacitySlider = document.getElementById('opacity-slider');
+    const opacityVal = document.getElementById('opacity-val');
+    
+    const visibleTimeSlider = document.getElementById('visible-time-slider');
+    const visibleTimeVal = document.getElementById('visible-time-val');
+    
+    const hiddenTimeSlider = document.getElementById('hidden-time-slider');
+    const hiddenTimeVal = document.getElementById('hidden-time-val');
+
+    let flickerTimeout = null;
+    let currentObjectUrl = null; // Guardar URL temporal en memoria
+
+    // Cargar configuraciones guardadas
+    const savedTest2Enabled = localStorage.getItem('test2Enabled') === '1';
+    const savedOpacity = localStorage.getItem('test2Opacity') || '1';
+    const savedVisibleTime = localStorage.getItem('test2VisibleTime') || '3.5';
+    const savedHiddenTime = localStorage.getItem('test2HiddenTime') || '0.5';
+
+    test2Toggle.checked = savedTest2Enabled;
+    opacitySlider.value = savedOpacity;
+    opacityVal.textContent = `${Math.round(savedOpacity * 100)}%`;
+
+    visibleTimeSlider.value = savedVisibleTime;
+    visibleTimeVal.textContent = `${savedVisibleTime}s`;
+
+    hiddenTimeSlider.value = savedHiddenTime;
+    hiddenTimeVal.textContent = `${savedHiddenTime}s`;
+
+    if (savedTest2Enabled) {
+      test2Panel.classList.add('active');
+    }
+
+    // Toggle menú Test2
+    test2Toggle.addEventListener('change', () => {
+      const isEnabled = test2Toggle.checked;
+      localStorage.setItem('test2Enabled', isEnabled ? '1' : '0');
+
+      if (isEnabled) {
+        test2Panel.classList.add('active');
+        startOverlaySystem();
+      } else {
+        test2Panel.classList.remove('active');
+        stopOverlaySystem();
+      }
+    });
+
+    // Deslizadores de configuración
+    opacitySlider.addEventListener('input', (e) => {
+      const val = e.target.value;
+      opacityVal.textContent = `${Math.round(val * 100)}%`;
+      localStorage.setItem('test2Opacity', val);
+      applyOpacity(val);
+    });
+
+    visibleTimeSlider.addEventListener('input', (e) => {
+      const val = e.target.value;
+      visibleTimeVal.textContent = `${val}s`;
+      localStorage.setItem('test2VisibleTime', val);
+      if (test2Toggle.checked) startOverlaySystem();
+    });
+
+    hiddenTimeSlider.addEventListener('input', (e) => {
+      const val = e.target.value;
+      hiddenTimeVal.textContent = `${val}s`;
+      localStorage.setItem('test2HiddenTime', val);
+      if (test2Toggle.checked) startOverlaySystem();
+    });
+
+    function applyOpacity(val) {
+      const container = getOrCreateOverlayContainer();
+      const mediaEl = container.querySelector('img, video');
+      if (mediaEl) {
+        mediaEl.style.opacity = val;
+      }
+    }
+
+    // Subida de Archivo
+    mediaInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Liberar URL anterior si existe
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+      }
+
+      currentObjectUrl = URL.createObjectURL(file);
+      const type = file.type.startsWith('video') ? 'video' : 'image';
+
+      renderMedia(currentObjectUrl, type);
+      removeMediaBtn.style.display = 'inline-block';
+
+      if (test2Toggle.checked) {
+        startOverlaySystem();
+      }
+    });
+
+    // Quitar Archivo
+    removeMediaBtn.addEventListener('click', () => {
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = null;
+      }
+      const container = getOrCreateOverlayContainer();
+      container.innerHTML = '';
+      removeMediaBtn.style.display = 'none';
+      stopOverlaySystem();
+    });
+
+    // Renderizado en la ventana superior
+    function renderMedia(src, type) {
+      const container = getOrCreateOverlayContainer();
+      container.innerHTML = '';
+      let el;
+      if (type === 'video') {
+        el = getTopDocument().createElement('video');
+        el.src = src;
+        el.autoplay = true;
+        el.loop = true;
+        el.muted = true;
+        el.playsInline = true;
+        
+        // Forzar reproducción activa
+        el.onloadeddata = () => {
+          el.play().catch(err => console.error("Error al iniciar vídeo:", err));
+        };
+      } else {
+        el = getTopDocument().createElement('img');
+        el.src = src;
+      }
+      Object.assign(el.style, {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        pointerEvents: 'none',
+        opacity: opacitySlider.value
+      });
+      container.appendChild(el);
+    }
+
+    // Bucle de temporización dinámica (Loop Mostrar / Ocultar)
+    function startOverlaySystem() {
+      stopOverlaySystem();
+      if (!currentObjectUrl) return;
+
+      const container = getOrCreateOverlayContainer();
+
+      function showPhase() {
+        container.style.display = 'flex';
+        const videoEl = container.querySelector('video');
+        if (videoEl) videoEl.play().catch(() => {});
+        
+        const visibleMs = parseFloat(visibleTimeSlider.value) * 1000;
+        flickerTimeout = setTimeout(hidePhase, visibleMs);
+      }
+
+      function hidePhase() {
+        container.style.display = 'none';
+        const hiddenMs = parseFloat(hiddenTimeSlider.value) * 1000;
+        flickerTimeout = setTimeout(showPhase, hiddenMs);
+      }
+
+      showPhase();
+    }
+
+    function stopOverlaySystem() {
+      if (flickerTimeout) {
+        clearTimeout(flickerTimeout);
+        flickerTimeout = null;
+      }
+      const container = getOrCreateOverlayContainer();
+      container.style.display = 'none';
+    }
+
+    // --- MANEJO DE RELOJ Y BATERÍA ---
     function updateTime() {
       const now = new Date();
 
-      // Horas, minutos y segundos estándar
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
-
-      // Obtenemos los milisegundos y los limitamos a 2 decimales
       const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
-
-      // Renderizamos la hora incluyendo los decimales
       document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}.${ms}</span>`;
     }
-
-    // Cambiamos el intervalo a 16.66...ms para que los decimales fluyan con fluidez
     setInterval(updateTime, 16.66667);
 
-    // Ejecución inicial
     updateTime();
-    // Battery percentage
     const batteryText = document.getElementById('battery-text');
     if (navigator.getBattery) {
       navigator.getBattery().then(b => {

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Centrado absoluto en toda la pantalla */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Inter", Arial, sans-serif;
+            overflow: hidden;
+            /* Evita barras de desplazamiento */
+        }
+
+        /* Contenedor principal a pantalla completa */
+        .alerta-pantalla {
+            text-align: center;
+            max-width: 90%;
+            width: 1200px;
+            /* Ancho máximo amplio para pantallas grandes */
+            padding: 20px;
+        }
+
+        /* Título GIGANTE */
+        .alerta-gigante {
+            font-size: 7rem;
+            /* Tamaño masivo para el título */
+            font-weight: 900;
+            color: #ff3333;
+            /* Rojo brillante e intenso */
+            text-transform: uppercase;
+            /* Forzar mayúsculas */
+            letter-spacing: -2px;
+            /* Junta un poco las letras para dar impacto */
+            margin: 0 0 30px 0;
+            line-height: 1;
+        }
+
+        /* Párrafo grande y legible */
+        .alerta-descripcion {
+            font-size: 2rem;
+            /* Párrafo mucho más grande de lo normal */
+            color: #ffffff;
+            /* Blanco grisáceo para alto contraste */
+            line-height: 1.5;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        /* Ajustes automáticos para pantallas de celulares */
+        @media (max-width: 768px) {
+            .alerta-gigante {
+                font-size: 3.5rem;
+                /* Se reduce en móviles para que no se corte */
+            }
+
+            .alerta-descripcion {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Contenedor del aviso masivo -->
+    <div class="alerta-pantalla">
+        <h1 class="alerta-gigante">Se necesita UH.</h1>
+        <p class="alerta-descripcion">Usa el UH para ir aquí...</p>
+        <br>
+        <p class="alerta-descripcion" id="cont">[Modo Seguro] Seras redirigido al Classroom en 5...</p>
+
+    </div>
+    <script>
+        const contadorElemento = document.getElementById('cont');
+
+        let segundos = 5;
+
+        const intervalo = setInterval(() => {
+            segundos--;
+
+            contadorElemento.textContent = `[Modo Seguro] Seras redirigido al Classroom en ${segundos}...`;
+
+            if (segundos <= 0) {
+                clearInterval(intervalo);
+                parent.location.href = "https://classroom.google.com/";
+            }
+        }, 1000);
+
+    </script>
+</body>
+
+</html>
