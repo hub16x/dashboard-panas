@@ -190,7 +190,7 @@
 </head>
 
 <body>
-  <h1 id="wave-title" class="bold">You need JavaScript to run this app</h1>
+  <h1 id="wave-title" class="bold"></h1>
 
   <footer>
     <span id="time">--:<span class="seconds">--</span><span class="ampm">--</span></span>
@@ -222,7 +222,7 @@
       '1 + 1 = 3',
       'el agua seca no hidrata tanto ¿o si?',
       'mi microondas me habla en francés',
-      'shrek es un estado mental',
+      'el chromebook no es tu propiedad...',
       'la gravedad es opcional los martes',
       'ayer me peleé con una paloma y perdí xd',
       'el color amarillo huele a matemática',
@@ -289,7 +289,7 @@
       'el dinero no da la felicidad, pero compra dinosaurios de plástico',
       'mi cargador funciona solo si lo doblo en un ángulo de 43 grados',
       'la estatua de la libertad es un alien congelado',
-      'los hombres de verdad lloran viendo Shrek 2',
+      '¿hoy sera el dia de la liberacion del bc definitiva?',
       'el helado de menta sabe a pasta de dientes con optimismo',
       'mi gato es el verdadero dueño de la casa',
       'los tornillos se aprietan hacia la derecha del reloj',
@@ -320,14 +320,10 @@
       'la flojera es el arte de descansar antes de cansarse',
     ];
 
-    // 2. Buscamos el elemento en el HTML
     const miTitulo = document.getElementById('wave-title');
 
     if (miTitulo) {
-      // 3. Calculamos un índice aleatorio del array
       const indiceAleatorio = Math.floor(Math.random() * titulosAlAzar.length);
-
-      // 4. Asignamos el título aleatorio
       miTitulo.textContent = titulosAlAzar[indiceAleatorio];
     }
   </script>

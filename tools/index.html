@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio - Cuadrícula Ultra Estable</title>
+  <title>test</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;550;600;700;800&display=swap" rel="stylesheet">
-  
+
   <style>
     /* 1. REINICIO DE CAJA GLOBAL: Evita que paddings o borders rompan el tamaño */
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
     }
 
-    body, html {
+    body,
+    html {
       margin: 0;
       padding: 24px;
       width: 100%;
-      min-height: 100vh; /* Permite centrado vertical completo y scroll si es necesario */
+      min-height: 100vh;
+      /* Permite centrado vertical completo y scroll si es necesario */
       background-color: transparent !important;
       font-family: "Inter", -apple-system, sans-serif;
       overflow-y: auto;
@@ -30,13 +35,16 @@
     ::-webkit-scrollbar {
       width: 8px;
     }
+
     ::-webkit-scrollbar-track {
       background: rgba(0, 0, 0, 0.15);
     }
+
     ::-webkit-scrollbar-thumb {
       background: rgba(0, 180, 216, 0.3);
       border-radius: 4px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(0, 237, 245, 0.6);
     }
@@ -65,9 +73,11 @@
       flex-direction: column;
       align-items: center;
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      width: 240px; /* Ancho consistente y proporcional al diseño original */
+      width: 240px;
+      /* Ancho consistente y proporcional al diseño original */
       max-width: 100%;
-      cursor: grab; /* Indicador de elemento arrastrable */
+      cursor: grab;
+      /* Indicador de elemento arrastrable */
     }
 
     .card-herramienta:active {
@@ -94,7 +104,8 @@
       aspect-ratio: 1 / 1;
       border-radius: 18px;
       overflow: hidden;
-      background-color: #231c18; /* Fondo gris/marrón oscuro por si la imagen es transparente */
+      background-color: #231c18;
+      /* Fondo gris/marrón oscuro por si la imagen es transparente */
       display: block;
     }
 
@@ -105,8 +116,10 @@
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Escala y recorta preservando la proporción original */
-      object-position: center; /* Centra el encuadre del recorte */
+      object-fit: cover;
+      /* Escala y recorta preservando la proporción original */
+      object-position: center;
+      /* Centra el encuadre del recorte */
       display: block;
       border-radius: 18px;
       transition: transform 0.4s ease;
@@ -117,7 +130,8 @@
       margin-top: 14px;
       width: 100%;
       text-align: center;
-      min-height: 20px; /* Evita saltos de diseño si no hay texto temporalmente */
+      min-height: 20px;
+      /* Evita saltos de diseño si no hay texto temporalmente */
     }
 
     /* Estilo del título del herramienta con prevención de desbordamiento */
@@ -128,7 +142,7 @@
       margin: 0;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis; /* Corta el texto largo limpiamente con "..." */
+      text-overflow: ellipsis;
       width: 100%;
       display: block;
     }
@@ -138,6 +152,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="grid-herramientas">
@@ -191,6 +206,60 @@
         <h3 class="game-title">Drive Mad</h3>
       </div>
     </a>
+    <!-- herramienta: ¿que hay de comer? -->
+    <a href="comedor.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/comedor.png" alt="¿que hay de comer?" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">¿que hay de comer?</h3>
+      </div>
+    </a>
+    <!-- herramienta: navegador sin... -->
+    <a href="nav.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/nav.png" alt="navegador sin..." loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">navegador sin...</h3>
+      </div>
+    </a>
+    <!-- herramienta: LAG -->
+    <a href="lag.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/lag.png" alt="LAG" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">LAG</h3>
+      </div>
+    </a>
+    <!-- herramienta: ocultar... ya sabes -->
+    <a href="historial.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/historial.png" alt="ocultar... ya sabes" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">ocultar... ya sabes</h3>
+      </div>
+    </a>
+      <!-- herramienta: bloqueo fake -->
+    <a href="imtUI.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/lazarusV2.png" alt="bloqueo fake" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">bloqueo fake</h3>
+      </div>
+    </a>
+        <!-- herramienta: bloqueo paginas fake -->
+    <a href="imtfakepag.html" class="card-herramienta">
+      <div class="img-container">
+        <img src="/media/lazarus.png" alt="bloqueo fake" loading="lazy">
+      </div>
+      <div class="card-info">
+        <h3 class="game-title">bloqueo paginas fake</h3>
+      </div>
+    </a>
 
   </div>
 
@@ -198,7 +267,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.querySelector('.grid-herramientas');
       const cards = [...container.querySelectorAll('.card-herramienta')];
-      
+
       // 1. Restaurar el orden guardado en el localStorage
       const savedOrder = localStorage.getItem('herramientas_order');
       if (savedOrder) {
@@ -227,7 +296,7 @@
 
         card.addEventListener('dragend', () => {
           card.classList.remove('dragging');
-          
+
           // Guardar el nuevo orden actualizando el localStorage
           const currentCards = [...container.querySelectorAll('.card-herramienta')];
           const newOrder = currentCards.map(c => c.getAttribute('href'));
@@ -283,4 +352,5 @@
     }
   </script>
 </body>
+
 </html>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Settings</title>
+  <title>Feedback</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
   <style>
     /* Reset */
@@ -32,7 +32,7 @@
       overflow: hidden;
       position: relative;
       flex-direction: column;
-      gap: 40px;
+      gap: 30px;
     }
 
     /* Warm overlay */
@@ -47,7 +47,7 @@
 
     /* Title */
     h1 {
-      font-size: 6rem;
+      font-size: 5rem;
       font-weight: 700;
       text-align: center;
       z-index: 1;
@@ -71,59 +71,89 @@
     }
 
     /* Settings container */
-    .settings-container {
+    .feedback-container {
       z-index: 1;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 30px 50px;
+      gap: 15px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 30px 40px;
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 500px;
+      border: 1px solid var(--glass-border);
     }
 
-    label {
+    .feedback-form {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 1.8rem;
-      cursor: pointer;
-      user-select: none;
+      flex-direction: column;
+      width: 100%;
+      gap: 15px;
     }
 
-    /* Custom toggle */
-    input[type="checkbox"] {
-      appearance: none;
-      width: 50px;
-      height: 28px;
-      background: #2b1a0e;
-      border-radius: 14px;
-      position: relative;
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #f0e0c8;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 235, 200, 0.05);
+      color: #f0e0c8;
+      font-size: 1rem;
       outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      border-color: var(--accent-color);
+    }
+
+    .input-group textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    .send-btn {
+      padding: 12px;
+      background-color: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: opacity 0.3s ease, transform 0.1s ease;
     }
 
-    input[type="checkbox"]::before {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 24px;
-      height: 24px;
-      background: #f0e0c8;
-      border-radius: 50%;
-      transition: 0.3s;
+    .send-btn:hover {
+      opacity: 0.9;
     }
 
-    input[type="checkbox"]:checked {
-      background: #c0622f;
+    .send-btn:active {
+      transform: scale(0.98);
     }
 
-    input[type="checkbox"]:checked::before {
-      transform: translateX(22px);
+    #status-msg {
+      font-size: 0.95rem;
+      text-align: center;
+      min-height: 20px;
     }
 
     /* Footer */
@@ -179,12 +209,6 @@
       margin-left: -5px;
     }
 
-    .ampm {
-      color: rgba(240, 224, 200, 0.5);
-      font-size: 0.8em;
-      margin-left: -8px;
-    }
-
     /* Battery */
     .battery {
       display: flex;
@@ -211,26 +235,12 @@
       }
 
       h1 {
-        font-size: 4rem
+        font-size: 3rem
       }
 
-      .settings-container {
-        padding: 20px 30px
-      }
-
-      label {
-        font-size: 1.4rem;
-        gap: 8px
-      }
-
-      input[type="checkbox"] {
-        width: 40px;
-        height: 22px
-      }
-
-      input[type="checkbox"]::before {
-        width: 18px;
-        height: 18px
+      .feedback-container {
+        width: 90%;
+        padding: 20px
       }
     }
   </style>
@@ -239,12 +249,23 @@
 <body>
   <h1>Comentarios</h1>
 
-  <div class="settings-container">
-    <p>Proximamente...</p>
+  <div class="feedback-container">
+    <form class="feedback-form" id="discord-form">
+      <div class="input-group">
+        <label for="username">Nombre (si no quiere poner, ponga "-")</label>
+        <input type="text" id="username" placeholder="Tu nombre" required maxlength="30">
+      </div>
+      <div class="input-group">
+        <label for="comment">Opinión</label>
+        <textarea id="comment" placeholder="Escribe aquí tu opinión..." required maxlength="500"></textarea>
+      </div>
+      <button type="submit" class="send-btn" id="submit-btn">Enviar comentario</button>
+      <div id="status-msg"></div>
+    </form>
   </div>
 
   <footer>
-    <span id="time">--:<span class="seconds">--</span><span class="ampm">--</span></span>
+    <span id="time">--:<span class="seconds">--</span></span>
 
     <span class="battery">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -257,27 +278,72 @@
   </footer>
 
   <script>
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1548253399873622069/sU_oLiv2rU2YDUadYAGC8Kz_4gNmKyTwXX0j1zShRIoE5SH6WNpLkQSD_BPy_oKwhKeX';
+
+    document.getElementById('discord-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const comment = document.getElementById('comment').value.trim();
+      const statusMsg = document.getElementById('status-msg');
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (!username || !comment) return;
+
+      submitBtn.disabled = true;
+      statusMsg.style.color = '#f0e0c8';
+      statusMsg.textContent = 'Enviando...';
+
+      // Formato del mensaje para Discord
+      const payload = {
+        embeds: [{
+          title: "💬 Nuevo Comentario Recibido",
+          color: 12608047, // Color hexadecimal #c0622f convertido a entero
+          fields: [
+            { name: "Usuario", value: username, inline: true },
+            { name: "Comentario", value: comment }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const response = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          statusMsg.style.color = '#7bc67b';
+          statusMsg.textContent = '¡Gracias! Tu comentario ha sido enviado.';
+          document.getElementById('discord-form').reset();
+        } else {
+          throw new Error('Error al enviar');
+        }
+      } catch (error) {
+        statusMsg.style.color = '#e57373';
+        statusMsg.textContent = 'Error al enviar el comentario. Inténtalo de nuevo.';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Reloj
     function updateTime() {
       const now = new Date();
-
-      // Horas, minutos y segundos estándar
       const hh = String(now.getHours()).padStart(2, '0');
       const mm = String(now.getMinutes()).padStart(2, '0');
       const ss = String(now.getSeconds()).padStart(2, '0');
-
-      // Obtenemos los milisegundos y los limitamos a 2 decimales
       const ms = String(now.getMilliseconds()).padStart(3, '0').slice(0, 2);
 
-      // Renderizamos la hora incluyendo los decimales
       document.getElementById('time').innerHTML = `${hh}:${mm}:<span class="seconds">${ss}.${ms}</span>`;
     }
 
-    // Cambiamos el intervalo a 16.66...ms para que los decimales fluyan con fluidez
     setInterval(updateTime, 16.66667);
-
-    // Ejecución inicial
     updateTime();
-    // Battery percentage
+
+    // Batería
     const batteryText = document.getElementById('battery-text');
     if (navigator.getBattery) {
       navigator.getBattery().then(b => {

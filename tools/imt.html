@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>
+
+        </title>
+</head>
+<body>
+    <script>
+        let bloqueoActivo = true;
+        let miVentana;
+
+        const miBase64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVzIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCI+CiAgICA8dGl0bGU+SU1UTGF6YXJ1cyAtIEF0ZW5jacOzbiBwb3IgZmF2b3I8L3RpdGxlPgogICAgPHN0eWxlPgogICAgICAgIGJvZHkgewogICAgICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjNDQ0OwogICAgICAgICAgICBtYXJnaW46IDA7IHBhZGRpbmc6IDA7CiAgICAgICAgICAgIGNvbG9yOiAjOTk5OwogICAgICAgICAgICBmb250LWZhbWlseTogJ0V4bycsICdVYnVudHUnLCBzYW5zLXNlcmlmOwogICAgICAgICAgICBkaXNwbGF5OiBmbGV4OwogICAgICAgICAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uOwogICAgICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsKICAgICAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICAgICAgICAgICAgaGVpZ2h0OiAxMDB2aDsKICAgICAgICAgICAgb3ZlcmZsb3c6IGhpZGRlbjsKICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyOwogICAgICAgICAgICBjdXJzb3I6IG5vbmU7CiAgICAgICAgfQogICAgICAgICNsb2NrIHsgei1pbmRleDogMTA7IHRyYW5zaXRpb246IGFsbCAwLjNzIGVhc2U7IH0KICAgICAgICAjbG9jayBpbWcgeyB3aWR0aDogMTgwcHg7IGhlaWdodDogYXV0bzsgZmlsdGVyOiBvcGFjaXR5KDAuOCk7IGRpc3BsYXk6IGJsb2NrOyB9CiAgICAgICAgI3dhdmVzX2NvbnRhaW5lciB7IHBvc2l0aW9uOiBhYnNvbHV0ZTsgd2lkdGg6IDEwMCU7IGJvdHRvbTogMDsgbGVmdDogMDsgbGluZS1oZWlnaHQ6IDA7IH0KICAgICAgICAud2F2ZXMgeyBwb3NpdGlvbjogcmVsYXRpdmU7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDE1dmg7IG1pbi1oZWlnaHQ6IDEwMHB4OyBtYXgtaGVpZ2h0OiAxNTBweDsgfQogICAgICAgIC5wYXJhbGxheCA+IHVzZSB7IGFuaW1hdGlvbjogbW92ZS1mb3JldmVyIDI1cyBjdWJpYy1iZXppZXIoLjU1LCAuNSwgLjQ1LCAuNSkgaW5maW5pdGU7IH0KICAgICAgICAucGFyYWxsYXggPiB1c2U6bnRoLWNoaWxkKDEpIHsgYW5pbWF0aW9uLWRlbGF5OiAtMnM7IGFuaW1hdGlvbi1kdXJhdGlvbjogN3M7IH0KICAgICAgICAucGFyYWxsYXggPiB1c2U6bnRoLWNoaWxkKDIpIHsgYW5pbWF0aW9uLWRlbGF5OiAtM3M7IGFuaW1hdGlvbi1kdXJhdGlvbjogMTBzOyB9CiAgICAgICAgLnBhcmFsbGF4ID4gdXNlOm50aC1jaGlsZCgzKSB7IGFuaW1hdGlvbi1kZWxheTogLTRzOyBhbmltYXRpb24tZHVyYXRpb246IDEzczsgfQogICAgICAgIC5wYXJhbGxheCA+IHVzZTpudGgtY2hpbGQoNCkgeyBhbmltYXRpb24tZGVsYXk6IC01czsgYW5pbWF0aW9uLWR1cmF0aW9uOiAyMHM7IH0KICAgICAgICBAa2V5ZnJhbWVzIG1vdmUtZm9yZXZlciB7IDAlIHsgdHJhbnNmb3JtOiB0cmFuc2xhdGUzZCgtOTBweCwgMCwgMCk7IH0gMTAwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlM2QoODVweCwgMCwgMCk7IH0gfQogICAgPC9zdHlsZT4KPC9oZWFkPgo8Ym9keSBvbmJsdXI9IndpbmRvdy5mb2N1cygpIiBvbmNsaWNrPSJkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQucmVxdWVzdEZ1bGxzY3JlZW4oKSI+CiAgICA8ZGl2IGlkPSJsb2NrIj4KICAgICAgICA8aW1nIHNyYz0iaHR0cHM6Ly9pLnBvc3RpbWcuY2MvR1RoajhRS3cvZGVzY2FyZ2EtKDEpLnBuZyIgYWx0PSJJTVQgTGF6YXJ1cyI+CiAgICA8L2Rpdj4KICAgIDxkaXYgaWQ9IndhdmVzX2NvbnRhaW5lciI+CiAgICAgICAgPHN2ZyBjbGFzcz0id2F2ZXMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiCiAgICAgICAgICAgIHZpZXdCb3g9IjAgMjQgMTUwIDI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBzaGFwZS1yZW5kZXJpbmc9ImF1dG8iPgogICAgICAgICAgICA8ZGVmcz4KICAgICAgICAgICAgICAgIDxwYXRoIGlkPSJnZW50bGUtd2F2ZSIgZD0iTS0xNjAgNDRjMzAgMCA1OC0xOCA4OC0xOHMgNTggMTggODggMTggNTgtMTggODggMTggNTgtMTggODggMTggdjQ0aC0zNTJ6IiAvPgogICAgICAgICAgICA8L2RlZnM+CiAgICAgICAgICAgIDxnIGNsYXNzPSJwYXJhbGxheCI+CiAgICAgICAgICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNnZW50bGUtd2F2ZSIgeD0iNDgiIHk9IjAiIGZpbGw9InJnYmEoNzksMTM5LDIwMywxKSIgLz4KICAgICAgICAgICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI2dlbnRsZS13YXZlIiB4PSI0OCIgeT0iMyIgZmlsbD0icmdiYSg5NSwxNTUsMjE5LDEpIiAvPgogICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjZ2VudGxlLXdhdmUiIHg9IjQ4IiB5PSI1IiBmaWxsPSJyZ2JhKDExNCwxNjIsMjEzLDEpIiAvPgogICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjZ2VudGxlLXdhdmUiIHg9IjQ4IiB5PSI3IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMykiIC8+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L3N2Zz4KICAgIDwvZGl2PgogICAgPHNjcmlwdD4KICAgICAgICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcigna2V5ZG93bicsIChlKSA9PiB7CiAgICAgICAgICAgIGlmIChlLmFsdEtleSAmJiBlLmtleS50b0xvd2VyQ2FzZSgpID09PSAneicpIHsKICAgICAgICAgICAgICAgIGlmICh3aW5kb3cub3BlbmVyKSB3aW5kb3cub3BlbmVyLnBvc3RNZXNzYWdlKCdkZXNhY3RpdmFyJywgJyonKTsKICAgICAgICAgICAgICAgIHdpbmRvdy5jbG9zZSgpOwogICAgICAgICAgICB9CiAgICAgICAgfSk7CgogICAgICAgIHdpbmRvdy5vbnJlc2l6ZSA9IGZ1bmN0aW9uKCkgewogICAgICAgICAgICB3aW5kb3cucmVzaXplVG8oc2NyZWVuLmF2YWlsV2lkdGgsIHNjcmVlbi5hdmFpbEhlaWdodCk7CiAgICAgICAgfTsKICAgICAgICAKICAgICAgICBzZXRJbnRlcnZhbCgoKSA9PiB7CiAgICAgICAgICAgIHdpbmRvdy5mb2N1cygpOwogICAgICAgIH0sIDEwMCk7CgogICAgICAgIGRvY3VtZW50Lm9ua2V5ZG93biA9IGZ1bmN0aW9uKGUpIHsKICAgICAgICAgICAgaWYgKCEoZS5hbHRLZXkgJiYgZS5rZXkudG9Mb3dlckNhc2UoKSA9PT0gJ3onKSkgcmV0dXJuIGZhbHNlOwogICAgICAgIH07CiAgICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+";
+
+        window.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key.toLowerCase() === 'z') {
+                bloqueoActivo = false;
+                if (miVentana) miVentana.close();
+                alert("Bloqueo desactivado.");
+            }
+        });
+
+        function abrirBloqueo() {
+            if (!bloqueoActivo) return;
+
+            const params = `width=${screen.availWidth},height=${screen.availHeight},top=0,left=0,menubar=no,toolbar=no,location=no,resizable=no,fullscreen=yes`;
+            
+            miVentana = window.open("about:blank", "_blank", params);
+
+            if (miVentana) {
+                const htmlDescodificado = decodeURIComponent(escape(atob(miBase64)));
+                
+                miVentana.document.open();
+                miVentana.document.write(htmlDescodificado);
+                miVentana.document.close();
+
+                const monitor = setInterval(() => {
+                    if (!bloqueoActivo) {
+                        clearInterval(monitor);
+                        return;
+                    }
+                    if (miVentana.closed) {
+                        clearInterval(monitor);
+                        abrirBloqueo();
+                    }
+                }, 500);
+            } else {
+                alert("Activa los pop-ups.");
+            }
+        }
+
+        window.addEventListener('message', (e) => {
+            if (e.data === 'desactivar') {
+                bloqueoActivo = false;
+                window.location.href = "https://classroom.google.com/";
+            }
+        });
+
+        abrirBloqueo();
+    </script>
+</body>
+</html>

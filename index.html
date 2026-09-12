@@ -366,12 +366,10 @@
       if (localStorage.getItem("bypassUH") === "1") {
         return;
       }
-
-      const lowRes = window.screen.width < 600 && window.screen.height < 600;
       const isChromeOS = /\bCrOS\b/.test(navigator.userAgent);
       const noPlugins = navigator.plugins.length === 0;
 
-      const isUH = lowRes && isChromeOS && noPlugins;
+      const isUH = isChromeOS && noPlugins;
 
       if (!isUH) {
         const homeItem = document.getElementById("mpCh1t");

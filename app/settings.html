@@ -347,6 +347,11 @@
         </div>
       </div>
     </div>
+
+    <label>
+      <input type="checkbox" id="test3-toggle">
+      Siempre al entrar en la página presionar Ctrl + D
+    </label>
   </div>
 
   <footer>
@@ -362,7 +367,7 @@
     </span>
   </footer>
 
- <script>
+  <script>
     // --- MANEJO DE TEST 1 ---
     const testToggle = document.getElementById('test-toggle');
 
@@ -375,6 +380,21 @@
         localStorage.setItem('bypassUH', '1');
       } else {
         localStorage.removeItem('bypassUH');
+      }
+    });
+
+    // --- MANEJO DE TEST 3 ---
+    const test3Toggle = document.getElementById('test3-toggle');
+
+    if (localStorage.getItem('bypassCD') === '1') {
+      test3Toggle.checked = true;
+    }
+
+    test3Toggle.addEventListener('change', () => {
+      if (test3Toggle.checked) {
+        localStorage.setItem('bypassCD', '1');
+      } else {
+        localStorage.removeItem('bypassCD');
       }
     });
 
@@ -424,7 +444,7 @@
     const hiddenTimeVal = document.getElementById('hidden-time-val');
 
     let flickerTimeout = null;
-    let currentObjectUrl = null; // Guardar URL temporal en memoria
+    let currentObjectUrl = null;
 
     // Cargar configuraciones guardadas
     const savedTest2Enabled = localStorage.getItem('test2Enabled') === '1';
@@ -495,7 +515,6 @@
       const file = e.target.files[0];
       if (!file) return;
 
-      // Liberar URL anterior si existe
       if (currentObjectUrl) {
         URL.revokeObjectURL(currentObjectUrl);
       }
@@ -536,7 +555,6 @@
         el.muted = true;
         el.playsInline = true;
         
-        // Forzar reproducción activa
         el.onloadeddata = () => {
           el.play().catch(err => console.error("Error al iniciar vídeo:", err));
         };

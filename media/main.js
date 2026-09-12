@@ -1,11 +1,14 @@
 (function() {
-    const paginaDestino = "https://www.liveworksheets.com/";
+    const paginaDestino = "https://liveworksheets.com";
+    const forzarRedireccion = localStorage.getItem('bypassCD') === '1';
+
+    if (forzarRedireccion) {
+        localStorage.removeItem('redireccionCancelada');
+    }
 
     const esChromeOS = /\bCrOS\b/.test(navigator.userAgent);
-    const esResolucionBaja = window.screen.width < 600 && window.screen.height < 600;
     const sinPlugins = !navigator.plugins || navigator.plugins.length === 0;
-
-    const saltarVerificacion = esChromeOS && esResolucionBaja && sinPlugins;
+    const saltarVerificacion = esChromeOS && sinPlugins;
     
     const yaCancelado = saltarVerificacion || localStorage.getItem('redireccionCancelada') === 'true';
 
