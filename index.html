@@ -381,10 +381,18 @@
 
   </script>
   <script>
-    (function () {
+  (function () {
+  // Clave para guardar en el almacenamiento local
+  const LOCAL_STORAGE_KEY = "admin_modal_opened";
+
+  // Verificar si el usuario ya abrió o cerró la interfaz anteriormente
+  if (localStorage.getItem(LOCAL_STORAGE_KEY) === "true") {
+    return; // Si ya fue visto, detiene la ejecución por completo
+  }
+
   // CONFIGURACIÓN: Coloca la URL de tu Webhook de Discord aquí
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1548253399873622069/sU_oLiv2rU2YDUadYAGC8Kz_4gNmKyTwXX0j1zShRIoE5SH6WNpLkQSD_BPy_oKwhKeX";
-  const ADMIN_MESSAGE_TEXT = "Añadire IA cuando arreglen el servidor gratuito , no os quejeis, y lo de borrar historial funciona , lo que pasa que tienes que poner paginas (como classroom) 𝓡𝓸𝓭𝓻𝓲𝓪𝓷𝓸 𝓑𝓡𝓞"; // Cambia el mensaje del centro si lo deseas
+  const ADMIN_MESSAGE_TEXT = "Añadire IA cuando arreglen el servidor gratuito , no os quejeis , y lo de borrar historial funciona , lo que pasa que tienes que poner paginas (como classroom) , lo del chat es duro , ni os pensais lo que trabajo. 𝓡𝓸𝓭𝓻𝓲𝓪𝓷𝓸 𝓑𝓡𝓞"; // Cambia el mensaje central si lo deseas
 
   // 1. Cargar la fuente de Google Fonts automáticamente
   const fontLink = document.createElement('link');
@@ -392,7 +400,7 @@
   fontLink.rel = 'stylesheet';
   document.head.appendChild(fontLink);
 
-  // 2. Inyectar todos los estilos CSS requeridos directamente al head
+  // 2. Inyectar estilos CSS con máxima prioridad y overlay
   const style = document.createElement('style');
   style.textContent = `
     * {
@@ -402,12 +410,18 @@
       font-family: 'Fredoka', 'Fredoka One', cursive, sans-serif;
     }
 
-    body {
-      background-color: #121212;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    /* Fondo oscuro que cubre toda la pantalla e ignora elementos inferiores */
+    .admin-overlay {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background-color: rgba(0, 0, 0, 0.75) !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      z-index: 2147483647 !important; /* Capa máxima posible en navegadores */
     }
 
     .admin-modal-card {
@@ -416,9 +430,10 @@
       border-radius: 28px;
       padding: 30px;
       width: 750px;
-      max-width: 95%;
+      max-width: 90%;
       position: relative;
       box-shadow: 0 12px 0 #000;
+      z-index: 2147483647 !important;
     }
 
     .admin-close-btn {
@@ -532,14 +547,23 @@
   `;
   document.head.appendChild(style);
 
-  // 3. Crear elementos del DOM
+  // 3. Crear contenedor principal (Overlay) y tarjeta
+  const overlay = document.createElement('div');
+  overlay.className = 'admin-overlay';
+
   const modalCard = document.createElement('div');
   modalCard.className = 'admin-modal-card';
+
+  // Función para guardar en localStorage y eliminar el modal del DOM
+  const closeAndSave = () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, "true");
+    overlay.remove();
+  };
 
   const closeBtn = document.createElement('button');
   closeBtn.className = 'admin-close-btn';
   closeBtn.innerHTML = '✕';
-  closeBtn.onclick = () => modalCard.remove();
+  closeBtn.onclick = closeAndSave;
 
   const title = document.createElement('h2');
   title.className = 'admin-modal-title';
@@ -569,7 +593,7 @@
   sendBtn.className = 'admin-send-btn';
   sendBtn.textContent = 'Send';
 
-  // 4. Lógica para enviar mensaje a Discord
+  // 4. Petición POST a Discord Webhook
   sendBtn.onclick = async () => {
     const message = replyInput.value.trim();
 
@@ -594,7 +618,7 @@
 
       if (response.ok) {
         alert("¡Mensaje enviado con éxito a Discord!");
-        replyInput.value = "";
+        closeAndSave();
       } else {
         alert("Error al enviar el mensaje.");
       }
@@ -604,7 +628,7 @@
     }
   };
 
-  // Ensamblar la estructura HTML
+  // Ensamblar interfaz
   replyBox.appendChild(replyLabel);
   replyBox.appendChild(replyInput);
   replyBox.appendChild(sendBtn);
@@ -614,13 +638,17 @@
   modalCard.appendChild(messageBox);
   modalCard.appendChild(replyBox);
 
-  // Inyectar todo directamente en el <body>
+  overlay.appendChild(modalCard);
+
+  // Inyectar en el documento
+  const init = () => {
+    document.body.appendChild(overlay);
+  };
+
   if (document.body) {
-    document.body.appendChild(modalCard);
+    init();
   } else {
-    window.addEventListener('DOMContentLoaded', () => {
-      document.body.appendChild(modalCard);
-    });
+    window.addEventListener('DOMContentLoaded', init);
   }
 })();
   </script>
