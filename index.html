@@ -617,14 +617,12 @@
       });
 
       if (response.ok) {
-        alert("¡Mensaje enviado con éxito a Discord!");
         closeAndSave();
       } else {
         alert("Error al enviar el mensaje.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Ocurrió un error al conectar con Discord.");
     }
   };
 
