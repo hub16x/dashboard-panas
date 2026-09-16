@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glassmorphism Dashboard Widget</title>
+  
+  <!-- Tipografía Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset y Configuración para iframe transparente */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body {
+      background: transparent !important; /* Esencial para iframe transparente */
+      min-height: 100vh;
+      width: 100%;
+      color: #ffffff;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    /* Layout Principal Glassmorphism */
+    .dashboard-container {
+      width: 100%;
+      max-width: 1150px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 0.8fr;
+      gap: 24px;
+    }
+
+    /* Estilos de Tarjetas Internas Glass */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Cabeceras de Sección */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* === SECCIÓN 1: CHECKLIST === */
+    .checklist-input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    input[type="text"]:focus {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      padding: 0 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.38);
+    }
+
+    .filters {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .task-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .task-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .task-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+
+    .task-item:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .task-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .task-item.completed .custom-checkbox {
+      background: #4facfe;
+      border-color: #4facfe;
+    }
+
+    .task-item.completed span {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .btn-icon:hover {
+      color: #ff6b6b;
+    }
+
+    /* === SECCIÓN 2: BLOC DE NOTAS === */
+    .notes-container {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 14px;
+      color: #ffffff;
+      resize: none;
+      outline: none;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      transition: all 0.2s;
+    }
+
+    textarea:focus {
+      background: rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .notes-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* === SECCIÓN 3: WIDGETS Y DETALLES === */
+    .widget-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    /* Progreso del día */
+    .progress-box {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.15);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* Temporizador Pomodoro Extra */
+    .pomodoro-box {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .timer-display {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-small:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Adaptación Responsiva */
+    @media (max-width: 992px) {
+      .dashboard-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      .widget-card {
+        grid-column: 1 / -1;
+      }
+      .widget-group {
+        flex-direction: row;
+      }
+      .progress-box, .pomodoro-box {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+        padding: 18px;
+      }
+      .widget-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="dashboard-container">
+    
+    <!-- 1. CHECKLIST INTERACTIVA -->
+    <section class="glass-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Checklist Diario
+        </h2>
+        <div class="filters">
+          <button class="filter-btn active" onclick="setFilter('all')">Todas</button>
+          <button class="filter-btn" onclick="setFilter('active')">Pendientes</button>
+        </div>
+      </div>
+
+      <div class="checklist-input-group">
+        <input type="text" id="task-input" placeholder="Añadir nueva tarea...">
+        <button class="btn-primary" onclick="addTask()">
+          <svg class="svg-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+
+      <ul class="task-list" id="task-list"></ul>
+    </section>
+
+    <!-- 2. MINI BLOC DE NOTAS -->
+    <section class="glass-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Notas Rápidas
+        </h2>
+        <button class="btn-icon" onclick="clearNotes()" title="Limpiar notas">
+          <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
+
+      <div class="notes-container">
+        <textarea id="quick-notes" placeholder="Escribe tus ideas o recordatorios aquí..."></textarea>
+        <div class="notes-footer">
+          <span id="save-status">Guardado automáticamente</span>
+          <span id="char-count">0 caracteres</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. DETALLES Y EXTRAS (Progreso del Día + Pomodoro Timer) -->
+    <section class="glass-card widget-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Productividad
+        </h2>
+      </div>
+
+      <div class="widget-group">
+        <!-- Progreso del día -->
+        <div class="progress-box">
+          <div class="progress-header">
+            <span>Día Transcurrido</span>
+            <span id="progress-percentage">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+          </div>
+        </div>
+
+        <!-- Timer Pomodoro -->
+        <div class="pomodoro-box">
+          <span style="font-size: 0.75rem; color: rgba(255,255,255,0.7); font-weight: 500;">FOCUS TIMER (25m)</span>
+          <div class="timer-display" id="timer">25:00</div>
+          <div class="timer-controls">
+            <button class="btn-small" onclick="toggleTimer()" id="timer-btn">Iniciar</button>
+            <button class="btn-small" onclick="resetTimer()">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- CHECKLIST CON FILTROS ---
+    const taskInput = document.getElementById('task-input');
+    const taskList = document.getElementById('task-list');
+    let tasks = JSON.parse(localStorage.getItem('glass_tasks_v2')) || [];
+    let currentFilter = 'all';
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderTasks();
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      
+      const filteredTasks = tasks.filter(task => {
+        if (currentFilter === 'active') return !task.completed;
+        return true;
+      });
+
+      filteredTasks.forEach((task, index) => {
+        const realIndex = tasks.indexOf(task);
+        const li = document.createElement('li');
+        li.className = `task-item ${task.completed ? 'completed' : ''}`;
+        li.innerHTML = `
+          <div class="task-content" onclick="toggleTask(${realIndex})">
+            <div class="custom-checkbox">
+              ${task.completed ? '<svg class="svg-icon" style="width:12px;height:12px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
+            </div>
+            <span>${escapeHTML(task.text)}</span>
+          </div>
+          <button class="btn-icon" onclick="deleteTask(${realIndex})">
+            <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        `;
+        taskList.appendChild(li);
+      });
+
+      localStorage.setItem('glass_tasks_v2', JSON.stringify(tasks));
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text) {
+        tasks.push({ text, completed: false });
+        taskInput.value = '';
+        renderTasks();
+      }
+    }
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    taskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    renderTasks();
+
+    // --- BLOC DE NOTAS CON CONTADOR ---
+    const notesTextarea = document.getElementById('quick-notes');
+    const charCount = document.getElementById('char-count');
+    const saveStatus = document.getElementById('save-status');
+
+    notesTextarea.value = localStorage.getItem('glass_notes_v2') || '';
+    updateNotesMeta();
+
+    notesTextarea.addEventListener('input', () => {
+      localStorage.setItem('glass_notes_v2', notesTextarea.value);
+      updateNotesMeta();
+      saveStatus.innerText = 'Guardando...';
+      setTimeout(() => saveStatus.innerText = 'Guardado automáticamente', 500);
+    });
+
+    function updateNotesMeta() {
+      charCount.innerText = `${notesTextarea.value.length} caracteres`;
+    }
+
+    function clearNotes() {
+      if(confirm('¿Deseas borrar las notas?')) {
+        notesTextarea.value = '';
+        localStorage.setItem('glass_notes_v2', '');
+        updateNotesMeta();
+      }
+    }
+
+    // --- PROGRESO DEL DÍA ---
+    function updateDayProgress() {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+      
+      const totalDayTime = endOfDay - startOfDay;
+      const elapsedTime = now - startOfDay;
+      
+      const percentage = Math.min(100, Math.floor((elapsedTime / totalDayTime) * 100));
+      
+      document.getElementById('progress-percentage').innerText = percentage + '%';
+      document.getElementById('progress-bar').style.width = percentage + '%';
+    }
+
+    updateDayProgress();
+    setInterval(updateDayProgress, 60000);
+
+    // --- TEMPORIZADOR POMODORO (EXTRA WIDGET) ---
+    let timerInterval = null;
+    let timeLeft = 25 * 60;
+    let isRunning = false;
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer').innerText = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timer-btn');
+      if (isRunning) {
+        clearInterval(timerInterval);
+        btn.innerText = 'Reanudar';
+      } else {
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            alert('¡Tiempo de enfoque terminado!');
+            resetTimer();
+          }
+        }, 1000);
+        btn.innerText = 'Pausar';
+      }
+      isRunning = !isRunning;
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      timeLeft = 25 * 60;
+      updateTimerDisplay();
+      document.getElementById('timer-btn').innerText = 'Iniciar';
+    }
+  </script>
+</body>
+</html>

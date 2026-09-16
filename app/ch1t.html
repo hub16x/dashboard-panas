@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test</title>
+    <title>PulseChat Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -86,6 +86,14 @@
             align-items: center;
             gap: 12px;
             overflow: hidden;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            padding: 2px 4px;
+            transition: background 0.2s;
+        }
+
+        .profile-badge:hover {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .avatar {
@@ -101,6 +109,15 @@
             color: #fff;
             flex-shrink: 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .user-details {
@@ -363,6 +380,15 @@
             font-weight: bold;
             flex-shrink: 0;
             margin-top: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .msg-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .msg-row.sent .msg-avatar {
@@ -419,6 +445,7 @@
             line-height: 1.5;
             word-break: break-word;
             position: relative;
+            white-space: pre-wrap;
         }
 
         .msg-row.sent .msg-bubble {
@@ -444,6 +471,9 @@
             padding: 4px;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .msg-bubble-container:hover .msg-copy-btn {
@@ -507,6 +537,7 @@
 
         .btn:hover { background: var(--primary-hover); }
         .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-secondary { background: var(--bg-elevated); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:hover { background: var(--bg-hover); }
         .btn-danger { background: #ef4444; }
@@ -553,7 +584,7 @@
             border-color: var(--primary);
         }
 
-        /* --- Auth Overlay --- */
+        /* --- Auth Overlay y Tabs --- */
         #auth-overlay {
             position: fixed;
             inset: 0;
@@ -566,16 +597,44 @@
         }
 
         .auth-card {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             border: 1px solid var(--border);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px var(--primary-glow);
             padding: 32px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 18px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: var(--bg-elevated);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            gap: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 8px var(--primary-glow);
         }
 
         /* --- Notificaciones Toast --- */
@@ -601,6 +660,8 @@
             align-items: center;
             gap: 8px;
             animation: slideInRight 0.3s ease;
+            max-width: 340px;
+            word-break: break-word;
         }
 
         .toast.error { border-left-color: #ef4444; }
@@ -627,7 +688,7 @@
 
     <div id="toast-container"></div>
 
-    <!-- Login Overlay -->
+    <!-- Login / Registro Overlay -->
     <div id="auth-overlay">
         <div class="auth-card">
             <div style="text-align: center;">
@@ -635,23 +696,88 @@
                     <i data-lucide="message-square" color="#fff" size="24"></i>
                 </div>
                 <h2>PulseChat Pro</h2>
-                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Mensajería con sistema de invitaciones</p>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Mensajería en tiempo real y salas privadas</p>
             </div>
 
-            <form onsubmit="handleAuth(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Selector de Modo: Login / Registro -->
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+                <button type="button" class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Crear Cuenta</button>
+            </div>
+
+            <form onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+                <div id="username-field" style="display: none;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Nombre o Nickname</label>
+                    <input type="text" id="auth-username" class="modal input" placeholder="Tu nombre" style="margin-top: 4px;">
+                </div>
                 <div>
                     <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Correo</label>
-                    <input type="email" id="email" class="modal input" placeholder="tu@correo.com" required autocomplete="email" style="margin-top: 4px;">
+                    <input type="email" id="auth-email" class="modal input" placeholder="tu@correo.com" required autocomplete="email" style="margin-top: 4px;">
                 </div>
                 <div>
                     <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Contraseña</label>
-                    <input type="password" id="pass" class="modal input" placeholder="••••••••" required autocomplete="current-password" style="margin-top: 4px;">
+                    <input type="password" id="auth-password" class="modal input" placeholder="••••••••" required autocomplete="current-password" minlength="6" style="margin-top: 4px;">
                 </div>
-                <button class="btn" type="submit" style="padding: 12px; margin-top: 6px;">
-                    <span>Entrar / Registrarse</span>
+
+                <div id="forgot-pass-link" style="display: flex; justify-content: flex-end;">
+                    <a href="javascript:void(0)" onclick="resetPasswordModal()" style="font-size: 11.5px; color: #a5b4fc; text-decoration: none;">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button class="btn" id="auth-submit-btn" type="submit" style="padding: 12px; margin-top: 6px;">
+                    <span id="auth-btn-text">Iniciar Sesión</span>
                     <i data-lucide="arrow-right" size="16"></i>
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal: Editar Perfil (Nombre y Foto) -->
+    <div class="modal-overlay" id="modal-edit-profile">
+        <div class="modal">
+            <h3>Editar Mi Perfil</h3>
+            
+            <!-- Vista Previa de la Foto -->
+            <div style="display: flex; align-items: center; gap: 16px; margin: 4px 0;">
+                <div class="avatar" id="edit-avatar-preview-box" style="width: 60px; height: 60px; font-size: 20px;">
+                    <span id="edit-avatar-initials">?</span>
+                    <img id="edit-avatar-preview" style="display:none;" alt="Avatar">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                    <label class="btn btn-secondary" style="font-size: 12px; padding: 6px 10px; cursor: pointer; text-align: center;">
+                        <i data-lucide="upload" size="14"></i> Subir imagen local
+                        <input type="file" id="edit-avatar-file" accept="image/*" style="display: none;" onchange="handleAvatarFile(event)">
+                    </label>
+                    <span style="font-size: 11px; color: var(--text-muted);">O ingresa un enlace web debajo</span>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Nombre / Nickname</label>
+                <input type="text" id="edit-username" placeholder="Tu nombre" style="margin-top: 4px;" required>
+            </div>
+
+            <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">URL de Foto de Perfil</label>
+                <input type="url" id="edit-avatar-url" placeholder="https://ejemplo.com/mifoto.jpg" style="margin-top: 4px;" oninput="previewAvatarUrl(this.value)">
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px;">
+                <button class="btn btn-secondary" onclick="closeModal('modal-edit-profile')">Cancelar</button>
+                <button class="btn" onclick="guardarPerfil()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Cambiar Contraseña -->
+    <div class="modal-overlay" id="modal-change-password">
+        <div class="modal">
+            <h3>Cambiar Contraseña</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Introduce tu nueva contraseña (mínimo 6 caracteres):</p>
+            <input type="password" id="new-account-password" placeholder="Nueva contraseña" minlength="6" required>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeModal('modal-change-password')">Cancelar</button>
+                <button class="btn" onclick="guardarNuevaContrasena()">Actualizar</button>
+            </div>
         </div>
     </div>
 
@@ -707,16 +833,27 @@
         <!-- Barra Lateral -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="profile-badge">
-                    <div class="avatar" id="current-user-avatar">?</div>
+                <div class="profile-badge" onclick="abrirModalPerfil()" title="Editar Perfil">
+                    <div class="avatar" id="current-user-avatar">
+                        <span id="current-user-avatar-text">?</span>
+                        <img id="current-user-avatar-img" style="display:none;" alt="Perfil">
+                    </div>
                     <div class="user-details">
                         <span class="name" id="current-user-email">Cargando...</span>
                         <span class="status">En línea</span>
                     </div>
                 </div>
-                <button class="icon-btn danger" onclick="logout()" title="Cerrar sesión">
-                    <i data-lucide="log-out" size="18"></i>
-                </button>
+                <div style="display: flex; align-items: center; gap: 2px;">
+                    <button class="icon-btn" onclick="abrirModalPerfil()" title="Editar Perfil">
+                        <i data-lucide="user-pen" size="17"></i>
+                    </button>
+                    <button class="icon-btn" onclick="openModal('modal-change-password')" title="Cambiar Contraseña">
+                        <i data-lucide="key" size="17"></i>
+                    </button>
+                    <button class="icon-btn danger" onclick="logout()" title="Cerrar sesión">
+                        <i data-lucide="log-out" size="18"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Banner interactivo de invitaciones -->
@@ -797,10 +934,13 @@
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
+        let currentUserProfile = { username: '', avatar_url: '' };
         let activeRoom = null;
         let activeChannel = null;
+        let invitesChannel = null;
         let cachedRooms = [];
         const profileCache = new Map();
+        let authMode = 'login'; // 'login' | 'register'
 
         lucide.createIcons();
 
@@ -811,17 +951,22 @@
             toast.className = `toast ${type}`;
             toast.innerText = message;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
         // 2. Sanitizador Anti-XSS
         function escapeHTML(str) {
+            if (!str) return '';
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
-        // 3. Sonido sutil de notificación (Web Audio API)
+        // 3. Audio de notificación
         function playChime() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -839,10 +984,13 @@
             } catch (e) {}
         }
 
-        // 4. Copiar al portapapeles
+        // 4. Copiar texto
         function copyText(text) {
-            navigator.clipboard.writeText(text);
-            showToast('Mensaje copiado al portapapeles', 'success');
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Mensaje copiado al portapapeles', 'success');
+            }).catch(() => {
+                showToast('No se pudo copiar el texto', 'error');
+            });
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -854,57 +1002,277 @@
             else sb.classList.add('hidden');
         }
 
-        // 5. Auth con creación de perfil segura
-        async function handleAuth(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('pass').value;
+        // 5. Conmutador Auth
+        function switchAuthTab(mode) {
+            authMode = mode;
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const userField = document.getElementById('username-field');
+            const submitText = document.getElementById('auth-btn-text');
+            const forgotLink = document.getElementById('forgot-pass-link');
 
-            let { data, error } = await db.auth.signInWithPassword({ email, password });
-            if (error) {
-                const reg = await db.auth.signUp({ 
-                    email, 
-                    password,
-                    options: { data: { username: email.split('@')[0] } }
-                });
-                if (reg.error) return showToast(reg.error.message, 'error');
-                data = reg.data;
+            if (mode === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                userField.style.display = 'none';
+                submitText.innerText = 'Iniciar Sesión';
+                forgotLink.style.display = 'flex';
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                userField.style.display = 'block';
+                submitText.innerText = 'Registrarse';
+                forgotLink.style.display = 'none';
+            }
+        }
+
+        // 6. Proceso de Login / Registro
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const btn = document.getElementById('auth-submit-btn');
+
+            if (!email || !password) return;
+            btn.disabled = true;
+
+            try {
+                if (authMode === 'login') {
+                    const { data, error } = await db.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        showToast(`Error al iniciar sesión: ${error.message}`, 'error');
+                        btn.disabled = false;
+                        return;
+                    }
+                    if (!data.session) {
+                        showToast('Confirma tu correo electrónico antes de ingresar.', 'error');
+                        btn.disabled = false;
+                        return;
+                    }
+                    currentUser = data.user;
+                    await initApp();
+                } else {
+                    const finalUsername = usernameInput || email.split('@')[0];
+                    const { data, error } = await db.auth.signUp({
+                        email,
+                        password,
+                        options: { data: { username: finalUsername } }
+                    });
+
+                    if (error) {
+                        showToast(error.message, 'error');
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    if (data.session) {
+                        currentUser = data.user;
+                        showToast('¡Cuenta creada correctamente!', 'success');
+                        await initApp();
+                    } else if (data.user) {
+                        showToast('Registro exitoso. Revisa tu correo para confirmar tu cuenta.', 'success');
+                        switchAuthTab('login');
+                    }
+                }
+            } catch (err) {
+                showToast('Error inesperado al conectar', 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // 7. Configuración de Perfil (Nombre y Foto)
+        function abrirModalPerfil() {
+            document.getElementById('edit-username').value = currentUserProfile.username;
+            document.getElementById('edit-avatar-url').value = currentUserProfile.avatar_url || '';
+            previewAvatarUrl(currentUserProfile.avatar_url);
+            openModal('modal-edit-profile');
+        }
+
+        function previewAvatarUrl(url) {
+            const preview = document.getElementById('edit-avatar-preview');
+            const initials = document.getElementById('edit-avatar-initials');
+            const name = document.getElementById('edit-username').value || currentUserProfile.username || 'U';
+            initials.innerText = name.slice(0, 2).toUpperCase();
+
+            if (url && url.trim()) {
+                preview.src = url.trim();
+                preview.style.display = 'block';
+                preview.onerror = () => {
+                    preview.style.display = 'none';
+                    initials.style.display = 'block';
+                };
+                preview.onload = () => {
+                    preview.style.display = 'block';
+                    initials.style.display = 'none';
+                };
+            } else {
+                preview.style.display = 'none';
+                initials.style.display = 'block';
+            }
+        }
+
+        // Conversión y compresión automática de fotos locales
+        function handleAvatarFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                return showToast('Por favor selecciona un archivo de imagen', 'error');
             }
 
-            currentUser = data.user;
-            await initApp();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 150;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h) {
+                        if (w > maxDim) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        }
+                    } else {
+                        if (h > maxDim) {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+
+                    document.getElementById('edit-avatar-url').value = compressedBase64;
+                    previewAvatarUrl(compressedBase64);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function guardarPerfil() {
+            const username = document.getElementById('edit-username').value.trim();
+            const avatarUrl = document.getElementById('edit-avatar-url').value.trim();
+
+            if (!username) return showToast('El nombre no puede estar vacío', 'error');
+
+            const payload = {
+                id: currentUser.id,
+                username: username,
+                avatar_url: avatarUrl || null
+            };
+
+            const { error } = await db.from('profiles').upsert(payload, { onConflict: 'id' });
+            if (error) return showToast('Error al actualizar: ' + error.message, 'error');
+
+            await db.auth.updateUser({
+                data: { username: username, avatar_url: avatarUrl || null }
+            });
+
+            currentUserProfile = { username, avatar_url: avatarUrl || null };
+            profileCache.set(currentUser.id, currentUserProfile);
+
+            actualizarSidebarPerfil(username, avatarUrl);
+            closeModal('modal-edit-profile');
+            showToast('¡Perfil actualizado con éxito!', 'success');
+
+            if (activeRoom) openRoom(activeRoom);
+        }
+
+        function actualizarSidebarPerfil(name, avatarUrl) {
+            document.getElementById('current-user-email').innerText = name;
+            const img = document.getElementById('current-user-avatar-img');
+            const txt = document.getElementById('current-user-avatar-text');
+
+            if (avatarUrl) {
+                img.src = avatarUrl;
+                img.style.display = 'block';
+                txt.style.display = 'none';
+                img.onerror = () => {
+                    img.style.display = 'none';
+                    txt.style.display = 'block';
+                    txt.innerText = name.slice(0, 2).toUpperCase();
+                };
+            } else {
+                img.style.display = 'none';
+                txt.style.display = 'block';
+                txt.innerText = name.slice(0, 2).toUpperCase();
+            }
+        }
+
+        // 8. Cambiar Contraseña
+        async function guardarNuevaContrasena() {
+            const passInput = document.getElementById('new-account-password');
+            const newPassword = passInput.value;
+
+            if (!newPassword || newPassword.length < 6) {
+                return showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+            }
+
+            const { error } = await db.auth.updateUser({ password: newPassword });
+            if (error) return showToast(`Error: ${error.message}`, 'error');
+
+            showToast('¡Contraseña actualizada con éxito!', 'success');
+            passInput.value = '';
+            closeModal('modal-change-password');
+        }
+
+        async function resetPasswordModal() {
+            const email = prompt('Introduce tu correo para restablecer tu contraseña:');
+            if (!email) return;
+
+            const { error } = await db.auth.resetPasswordForEmail(email.trim());
+            if (error) showToast(error.message, 'error');
+            else showToast('Se ha enviado un enlace de recuperación a tu correo.', 'success');
         }
 
         async function logout() {
+            if (activeChannel) await db.removeChannel(activeChannel);
+            if (invitesChannel) await db.removeChannel(invitesChannel);
             await db.auth.signOut();
             location.reload();
         }
 
-        // 6. Inicialización de la Aplicación
+        // 9. Inicialización de la Aplicación
         async function initApp() {
+            if (!currentUser) return;
+
             document.getElementById('auth-overlay').style.display = 'none';
-            const email = currentUser.email;
-            document.getElementById('current-user-email').innerText = email;
-            document.getElementById('current-user-avatar').innerText = email.slice(0, 2).toUpperCase();
+            const email = currentUser.email.toLowerCase();
 
-            // Guardar perfil automáticamente si no existe
-            await db.from('profiles').upsert({
-                id: currentUser.id,
-                username: currentUser.user_metadata?.username || email.split('@')[0]
-            }, { onConflict: 'id' });
+            // Cargar datos del perfil existente
+            const { data: prof } = await db.from('profiles').select('username, avatar_url').eq('id', currentUser.id).maybeSingle();
+            
+            const username = prof?.username || currentUser.user_metadata?.username || email.split('@')[0];
+            const avatarUrl = prof?.avatar_url || currentUser.user_metadata?.avatar_url || null;
 
-            profileCache.set(currentUser.id, currentUser.user_metadata?.username || email.split('@')[0]);
+            currentUserProfile = { username, avatar_url: avatarUrl };
+            profileCache.set(currentUser.id, currentUserProfile);
+
+            actualizarSidebarPerfil(username, avatarUrl);
+
+            // Sincronizar por si es usuario nuevo
+            if (!prof) {
+                try {
+                    await db.from('profiles').upsert({ id: currentUser.id, username, avatar_url: avatarUrl }, { onConflict: 'id' });
+                } catch (e) {}
+            }
 
             await loadRooms();
             await checkPendingInvitations();
 
-            // Escuchar invitaciones en vivo dirigidas a este correo
-            db.channel('user-invites')
+            if (invitesChannel) await db.removeChannel(invitesChannel);
+            invitesChannel = db.channel(`user-invites-${currentUser.id}`)
                 .on('postgres_changes', { 
                     event: '*', 
                     schema: 'public', 
                     table: 'room_invitations', 
-                    filter: `invited_email=eq.${email.toLowerCase()}` 
+                    filter: `invited_email=eq.${email}` 
                 }, () => {
                     playChime();
                     checkPendingInvitations();
@@ -912,7 +1280,7 @@
                 .subscribe();
         }
 
-        // 7. Cargar y Filtrar Salas
+        // 10. Cargar y Filtrar Salas
         async function loadRooms() {
             const { data: rooms, error } = await db.from('rooms').select('*');
             if (error) return showToast('Error al cargar canales', 'error');
@@ -928,6 +1296,11 @@
         function renderRooms(rooms) {
             const list = document.getElementById('rooms-list');
             list.innerHTML = '';
+
+            if (rooms.length === 0) {
+                list.innerHTML = '<div style="font-size:12px; color:var(--text-muted); padding:10px;">No hay salas disponibles</div>';
+                return;
+            }
 
             rooms.forEach(r => {
                 const item = document.createElement('div');
@@ -950,7 +1323,7 @@
             renderRooms(cachedRooms.filter(r => r.name.toLowerCase().includes(query)));
         }
 
-        // 8. Abrir Sala y Escucha Realtime
+        // 11. Abrir Sala y Cargar Mensajes
         async function openRoom(room) {
             activeRoom = room;
             renderRooms(cachedRooms);
@@ -962,7 +1335,6 @@
             `;
             document.getElementById('room-subtitle').innerText = room.is_public ? 'Canal público abierto a todos' : 'Canal privado protegido';
 
-            // Visibilidad de botones de acción
             document.getElementById('btn-invite').style.display = room.is_public ? 'none' : 'inline-flex';
             document.getElementById('btn-members').style.display = 'inline-flex';
 
@@ -971,11 +1343,13 @@
             const box = document.getElementById('msgs');
             box.innerHTML = '<div class="empty-chat"><p>Cargando mensajes...</p></div>';
 
-            if (activeChannel) await db.removeChannel(activeChannel);
+            if (activeChannel) {
+                await db.removeChannel(activeChannel);
+                activeChannel = null;
+            }
 
-            // Cargar historial de mensajes con perfil de autor
             const { data: msgs } = await db.from('messages')
-                .select('*, profiles(username)')
+                .select('*, profiles(username, avatar_url)')
                 .eq('room_id', room.id)
                 .order('created_at', { ascending: true });
 
@@ -992,7 +1366,7 @@
             }
             scrollToBottom();
 
-            // Escuchar mensajes entrantes en vivo
+            // Escucha en tiempo real
             activeChannel = db.channel(`room:${room.id}`)
                 .on('postgres_changes', { 
                     event: 'INSERT', 
@@ -1002,53 +1376,78 @@
                 }, async p => {
                     const msg = p.new;
                     if (!profileCache.has(msg.sender_id)) {
-                        const { data } = await db.from('profiles').select('username').eq('id', msg.sender_id).maybeSingle();
-                        profileCache.set(msg.sender_id, data?.username || 'Usuario');
+                        const { data } = await db.from('profiles').select('username, avatar_url').eq('id', msg.sender_id).maybeSingle();
+                        profileCache.set(msg.sender_id, {
+                            username: data?.username || 'Usuario',
+                            avatar_url: data?.avatar_url || null
+                        });
                     }
-                    const author = profileCache.get(msg.sender_id);
+                    const prof = profileCache.get(msg.sender_id);
 
                     const empty = box.querySelector('.empty-chat');
                     if (empty) empty.remove();
 
-                    renderMsg({ ...msg, profiles: { username: author } });
+                    renderMsg({ ...msg, profiles: prof });
                     scrollToBottom();
 
-                    if (msg.sender_id !== currentUser.id) playChime();
+                    if (currentUser && msg.sender_id !== currentUser.id) playChime();
                 })
                 .subscribe();
         }
 
-        // 9. Renderizado Completo de Mensajes (Autor, Avatar, Hora, Contenido)
         function formatTime(isoStr) {
             if (!isoStr) return '';
             const d = new Date(isoStr);
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
+        // 12. Renderizado de Mensajes con Foto de Perfil
         function renderMsg(m) {
-            const isMe = m.sender_id === currentUser.id;
+            const isMe = currentUser && m.sender_id === currentUser.id;
             const author = isMe ? 'Tú' : (m.profiles?.username || 'Usuario');
+            const avatarUrl = isMe ? currentUserProfile.avatar_url : (m.profiles?.avatar_url || null);
             const time = formatTime(m.created_at || new Date());
-            const initials = author.slice(0, 2).toUpperCase();
+            const initials = escapeHTML((isMe ? currentUserProfile.username : author).slice(0, 2).toUpperCase());
 
             const row = document.createElement('div');
             row.className = `msg-row ${isMe ? 'sent' : 'received'}`;
 
-            row.innerHTML = `
-                <div class="msg-avatar">${initials}</div>
-                <div class="msg-content-block">
-                    <div class="msg-meta">
-                        <span class="author">${escapeHTML(author)}</span>
-                        <span class="time">${time}</span>
-                    </div>
-                    <div class="msg-bubble-container">
-                        <div class="msg-bubble">${escapeHTML(m.content)}</div>
-                        <button class="msg-copy-btn" title="Copiar texto" onclick="copyText('${escapeHTML(m.content).replace(/'/g, "\\'")}')">
-                            <i data-lucide="copy" size="13"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
+            const avatar = document.createElement('div');
+            avatar.className = 'msg-avatar';
+            if (avatarUrl) {
+                avatar.innerHTML = `<img src="${escapeHTML(avatarUrl)}" alt="${initials}" onerror="this.parentElement.innerHTML='${initials}'">`;
+            } else {
+                avatar.innerText = initials;
+            }
+
+            const contentBlock = document.createElement('div');
+            contentBlock.className = 'msg-content-block';
+
+            const meta = document.createElement('div');
+            meta.className = 'msg-meta';
+            meta.innerHTML = `<span class="author">${escapeHTML(author)}</span><span class="time">${time}</span>`;
+
+            const bubbleContainer = document.createElement('div');
+            bubbleContainer.className = 'msg-bubble-container';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'msg-bubble';
+            bubble.textContent = m.content;
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'msg-copy-btn';
+            copyBtn.title = 'Copiar texto';
+            copyBtn.innerHTML = '<i data-lucide="copy" size="13"></i>';
+            copyBtn.onclick = () => copyText(m.content);
+
+            bubbleContainer.appendChild(bubble);
+            bubbleContainer.appendChild(copyBtn);
+
+            contentBlock.appendChild(meta);
+            contentBlock.appendChild(bubbleContainer);
+
+            row.appendChild(avatar);
+            row.appendChild(contentBlock);
 
             document.getElementById('msgs').appendChild(row);
             lucide.createIcons();
@@ -1059,12 +1458,12 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // 10. Envío de Mensajes
+        // 13. Envío de Mensajes
         async function sendMsg(e) {
             e.preventDefault();
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
-            if (!text || !activeRoom) return;
+            if (!text || !activeRoom || !currentUser) return;
 
             input.value = '';
             const { error } = await db.from('messages').insert([{ 
@@ -1076,7 +1475,7 @@
             if (error) showToast('Error al enviar el mensaje', 'error');
         }
 
-        // 11. Crear Sala
+        // 14. Crear Sala
         async function crearSala() {
             const name = document.getElementById('new-room-name').value.trim();
             if (!name) return;
@@ -1089,12 +1488,12 @@
             showToast('Sala creada con éxito', 'success');
 
             await loadRooms();
-            openRoom(data);
+            if (data) openRoom(data);
         }
 
-        // 12. Enviar Invitación
+        // 15. Enviar Invitación
         async function enviarInvitacion() {
-            const email = document.getElementById('invite-email').value.trim();
+            const email = document.getElementById('invite-email').value.trim().toLowerCase();
             if (!email || !activeRoom) return;
 
             const { error } = await db.rpc('invitar_a_sala', { 
@@ -1109,7 +1508,7 @@
             document.getElementById('invite-email').value = '';
         }
 
-        // 13. Ver Miembros del Chat
+        // 16. Ver Miembros con Fotos
         async function verMiembrosSala() {
             if (!activeRoom) return;
 
@@ -1130,7 +1529,7 @@
             }
 
             const { data: members, error } = await db.from('room_members')
-                .select('user_id, profiles(username)')
+                .select('user_id, profiles(username, avatar_url)')
                 .eq('room_id', activeRoom.id);
 
             if (error || !members) {
@@ -1143,12 +1542,19 @@
 
             members.forEach(m => {
                 const name = m.profiles?.username || 'Usuario';
+                const avatarUrl = m.profiles?.avatar_url || null;
+                const initials = name.slice(0, 2).toUpperCase();
                 const isOwner = m.user_id === activeRoom.owner_id;
+
+                const avatarHtml = avatarUrl 
+                    ? `<div class="avatar" style="width:30px; height:30px;"><img src="${escapeHTML(avatarUrl)}" alt="${initials}" onerror="this.parentElement.innerHTML='${initials}'"></div>`
+                    : `<div class="avatar" style="width:30px; height:30px; font-size:11px;">${initials}</div>`;
+
                 const item = document.createElement('div');
                 item.style = 'display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:10px 12px; border-radius:8px;';
                 item.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="avatar" style="width:28px; height:28px; font-size:11px;">${name.slice(0, 2).toUpperCase()}</div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        ${avatarHtml}
                         <span style="font-size:13px; font-weight:500;">${escapeHTML(name)} ${m.user_id === currentUser.id ? '(Tú)' : ''}</span>
                     </div>
                     ${isOwner ? '<span style="font-size:11px; background:rgba(99,102,241,0.2); color:#a5b4fc; padding:2px 8px; border-radius:4px; font-weight:600;">Creador</span>' : ''}
@@ -1157,16 +1563,19 @@
             });
         }
 
-        // 14. Revisar y Responder Invitaciones
+        // 17. Revisar y Responder Invitaciones
         async function checkPendingInvitations() {
-            const { data: invites } = await db.from('room_invitations')
+            if (!currentUser || !currentUser.email) return;
+
+            const { data: invites, error } = await db.from('room_invitations')
                 .select('id, room_id, rooms(name)')
+                .eq('invited_email', currentUser.email.toLowerCase())
                 .eq('status', 'pending');
 
             const banner = document.getElementById('invitations-banner');
             const list = document.getElementById('invitations-list');
 
-            if (invites && invites.length > 0) {
+            if (!error && invites && invites.length > 0) {
                 banner.style.display = 'flex';
                 document.getElementById('invites-count').innerText = invites.length;
                 list.innerHTML = '';
@@ -1203,13 +1612,23 @@
             await loadRooms();
         }
 
-        // 15. Comprobar sesión activa al cargar la página
+        // 18. Escuchador de Sesión
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await db.auth.getSession();
             if (session?.user) {
                 currentUser = session.user;
-                initApp();
+                await initApp();
             }
+
+            db.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session?.user) {
+                    currentUser = session.user;
+                    await initApp();
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    document.getElementById('auth-overlay').style.display = 'flex';
+                }
+            });
         });
     </script>
 </body>

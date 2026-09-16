@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador Avanzado Google</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: transparent;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Glassmorphism Container */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 24px;
+      padding: 30px;
+      width: 100%;
+      max-width: 650px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      color: #fff;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.9;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    /* Estilo para las opciones dentro del select en desplegable */
+    select option {
+      background: #2b2b36;
+      color: #fff;
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    input[type="text"]:focus, select:focus {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .btn-submit:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-card">
+    <div class="title">Buscador Pro</div>
+    
+    <form action="https://www.google.com/search" method="GET" target="_blank">
+      
+      <!-- Término de búsqueda principal -->
+      <div class="form-group">
+        <label for="q">Término de búsqueda</label>
+        <input type="text" id="q" name="q" placeholder="Escribe tu búsqueda aquí..." required autocomplete="off">
+      </div>
+
+      <!-- Tipo de búsqueda (Modo / UDM) -->
+      <div class="form-group">
+        <label for="udm">Modo / Tipo de resultado (udm)</label>
+        <select id="udm" name="udm">
+          <option value="">Por defecto (Estándar)</option>
+          <option value="14">Web / Texto Puro (Sin IA / Sin Widgets)</option>
+          <option value="2">Imágenes</option>
+          <option value="7">Vídeos</option>
+          <option value="12">Noticias</option>
+          <option value="50">Modo IA (AI Mode)</option>
+          <option value="36">Shopping / Compras</option>
+          <option value="18">Foros y Discusiones</option>
+          <option value="3">Mapas / Lugares</option>
+          <option value="1">Libros</option>
+          <option value="10">Finanzas</option>
+        </select>
+      </div>
+
+      <!-- Filtros adicionales en dos columnas -->
+      <div class="grid-2">
+        
+        <!-- Antigüedad / Fecha (tbs) -->
+        <div class="form-group">
+          <label for="tbs">Fecha de publicación</label>
+          <select id="tbs" name="tbs">
+            <option value="">Cualquier fecha</option>
+            <option value="qdr:h">Última hora</option>
+            <option value="qdr:d">Últimas 24 horas</option>
+            <option value="qdr:w">Última semana</option>
+            <option value="qdr:m">Último mes</option>
+            <option value="qdr:y">Último año</option>
+          </select>
+        </div>
+
+        <!-- Idioma de la búsqueda (lr) -->
+        <div class="form-group">
+          <label for="lr">Idioma de los resultados</label>
+          <select id="lr" name="lr">
+            <option value="">Cualquier idioma</option>
+            <option value="lang_es">Español</option>
+            <option value="lang_en">Inglés</option>
+            <option value="lang_fr">Francés</option>
+            <option value="lang_de">Alemán</option>
+            <option value="lang_pt">Portugués</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="grid-2">
+        
+        <!-- Búsqueda exacta -->
+        <div class="form-group">
+          <label for="as_epq">Frase exacta</label>
+          <input type="text" id="as_epq" name="as_epq" placeholder='Ej: "inteligencia artificial"'>
+        </div>
+
+        <!-- Excluir palabras -->
+        <div class="form-group">
+          <label for="as_eq">Excluir palabras</label>
+          <input type="text" id="as_eq" name="as_eq" placeholder="Ej: gratis prueba">
+        </div>
+
+      </div>
+
+      <!-- Botón de envío -->
+      <button type="submit" class="btn-submit">Buscar en Google</button>
+
+    </form>
+  </div>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    if (!form) return;
+
+    // 1. Crear el botón dinámicamente con los estilos existentes
+    const btnIgu = document.createElement('button');
+    btnIgu.type = 'button';
+    btnIgu.className = 'btn-submit';
+    btnIgu.textContent = '?igu=1';
+    btnIgu.style.marginTop = '10px';
+
+    // 2. Evento al hacer clic en el botón
+    btnIgu.addEventListener('click', () => {
+      // Validar si el campo obligatorio "que" tiene valor
+      const inputQue = document.getElementById('que');
+      if (!inputQue || !inputQue.value.trim()) {
+        inputQue.reportValidity();
+        return;
+      }
+
+      // Recopilar los parámetros del formulario
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+
+      for (const [key, value] of formData.entries()) {
+        if (value) {
+          params.append(key, value);
+        }
+      }
+
+      // Añadir el parámetro extra igu=1
+      params.append('igu', '1');
+
+      // Construir la URL final de Google
+      const finalUrl = `https://www.google.com/search?${params.toString()}`;
+
+      // 3. Abrir ventana en about:blank e incrustar la búsqueda en un iframe
+      const newWin = window.open('about:blank', '_blank');
+      if (newWin) {
+        newWin.document.write(`
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <title><\/title>
+            <style>
+              html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+              iframe { width: 100%; height: 100%; border: none; }
+            <\/style>
+          <\/head>
+          <body>
+            <iframe src="${finalUrl}"></iframe>
+          <\/body>
+          <\/html>
+        `);
+        newWin.document.close();
+      }
+    });
+
+    // Insertar el botón al final del formulario
+    form.appendChild(btnIgu);
+  });
+</script>
+
+</body>
+</html>
