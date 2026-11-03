@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseChat Pro</title>
+    <title>Edelvives Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -47,13 +47,11 @@
             overflow: hidden;
         }
 
-        /* --- Scrollbar personalizada --- */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
 
-        /* --- Layout de la Aplicación --- */
         .app-layout {
             display: flex;
             width: 100vw;
@@ -61,7 +59,7 @@
             position: relative;
         }
 
-        /* --- Barra Lateral (Sidebar) --- */
+        /* --- Barra Lateral --- */
         .sidebar {
             width: 320px;
             flex-shrink: 0;
@@ -173,7 +171,6 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
-        /* Banner de Invitaciones */
         .invitations-banner {
             margin: 10px 14px 4px;
             padding: 10px 14px;
@@ -192,9 +189,7 @@
             50% { border-color: rgba(99, 102, 241, 0.8); }
         }
 
-        .search-container {
-            padding: 10px 14px;
-        }
+        .search-container { padding: 10px 14px; }
 
         .search-box {
             display: flex;
@@ -339,6 +334,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            scroll-behavior: smooth;
         }
 
         .empty-chat {
@@ -355,7 +351,9 @@
             display: flex;
             gap: 12px;
             animation: slideIn 0.2s ease forwards;
-            max-width: 75%;
+            max-width: 78%;
+            position: relative;
+            transition: background 0.3s ease;
         }
 
         .msg-row.sent {
@@ -367,9 +365,18 @@
             align-self: flex-start;
         }
 
+        .msg-row.highlight-pulse {
+            animation: pulseHighlight 1.5s ease;
+        }
+
+        @keyframes pulseHighlight {
+            0%, 100% { background: transparent; }
+            50% { background: rgba(99, 102, 241, 0.25); border-radius: var(--radius-md); }
+        }
+
         .msg-avatar {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             background: #334155;
             color: #fff;
@@ -398,6 +405,7 @@
         .msg-content-block {
             display: flex;
             flex-direction: column;
+            max-width: 100%;
         }
 
         .msg-row.sent .msg-content-block {
@@ -445,7 +453,9 @@
             line-height: 1.5;
             word-break: break-word;
             position: relative;
-            white-space: pre-wrap;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .msg-row.sent .msg-bubble {
@@ -462,34 +472,212 @@
             border: 1px solid var(--border);
         }
 
-        .msg-copy-btn {
-            opacity: 0;
-            background: rgba(30, 41, 59, 0.7);
-            border: none;
-            color: var(--text-muted);
+        /* Cita de Respuesta (Reply Quote) */
+        .msg-reply-quote {
+            background: rgba(0, 0, 0, 0.25);
+            border-left: 3px solid #a5b4fc;
+            padding: 5px 8px;
             border-radius: 4px;
-            padding: 4px;
+            font-size: 11.5px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 2px;
+            transition: background 0.2s;
         }
 
-        .msg-bubble-container:hover .msg-copy-btn {
+        .msg-reply-quote:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .msg-reply-quote .reply-author {
+            font-weight: 700;
+            color: #c7d2fe;
+        }
+
+        .msg-reply-quote .reply-text {
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px;
+        }
+
+        /* Imagen en el mensaje */
+        .msg-image {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s;
+            display: block;
+        }
+
+        .msg-image:hover {
+            transform: scale(1.01);
+            opacity: 0.95;
+        }
+
+        /* Barra de acciones flotante sobre el mensaje */
+        .msg-actions {
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 2px;
+            backdrop-filter: blur(6px);
+            transition: opacity 0.2s ease;
+        }
+
+        .msg-bubble-container:hover .msg-actions {
             opacity: 1;
         }
 
-        .msg-copy-btn:hover {
+        .msg-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            border-radius: 4px;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .msg-action-btn:hover {
             color: #fff;
             background: var(--bg-hover);
         }
 
+        /* Selector de Reacciones Popover */
+        .reaction-popover {
+            position: absolute;
+            bottom: calc(100% + 4px);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            padding: 4px 8px;
+            display: none;
+            gap: 6px;
+            z-index: 50;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: fadeIn 0.15s ease;
+        }
+
+        .reaction-popover.active {
+            display: flex;
+        }
+
+        .popover-emoji {
+            background: transparent;
+            border: none;
+            font-size: 17px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 50%;
+            transition: transform 0.15s;
+        }
+
+        .popover-emoji:hover {
+            transform: scale(1.3);
+        }
+
+        /* Chips de Reacciones debajo del mensaje */
+        .reaction-pills-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .reaction-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 2px 7px;
+            border-radius: 99px;
+            font-size: 11.5px;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .reaction-pill:hover {
+            background: var(--bg-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .reaction-pill.reacted {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: var(--primary);
+            color: #a5b4fc;
+        }
+
         /* --- Barra de entrada de texto --- */
         .chat-input-wrapper {
-            padding: 14px 20px;
             background: var(--bg-surface);
             border-top: 1px solid var(--border);
+            position: relative;
+        }
+
+        /* Banner de "Respondiendo a..." */
+        .reply-banner {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30, 41, 59, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 7px 18px;
+            font-size: 12px;
+            animation: slideIn 0.2s ease;
+        }
+
+        .reply-banner.active {
+            display: flex;
+        }
+
+        .reply-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .reply-banner-content strong {
+            color: #a5b4fc;
+        }
+
+        /* Previsualización de Imagen pendiente */
+        .image-preview-bar {
+            display: none;
+            padding: 8px 18px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-preview-bar.active {
+            display: flex;
+        }
+
+        .preview-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--border);
         }
 
         .chat-input-form {
@@ -498,8 +686,9 @@
             background: var(--bg-elevated);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: 4px 6px 4px 14px;
-            gap: 8px;
+            padding: 4px 6px 4px 10px;
+            gap: 6px;
+            margin: 12px 18px;
             transition: all 0.2s;
         }
 
@@ -515,10 +704,10 @@
             color: #fff;
             font-size: 14px;
             outline: none;
-            padding: 8px 0;
+            padding: 8px 4px;
         }
 
-        /* --- Botones Generales --- */
+        /* Botones Generales */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -543,7 +732,7 @@
         .btn-danger { background: #ef4444; }
         .btn-danger:hover { background: #dc2626; }
 
-        /* --- Modales --- */
+        /* Modales */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -580,11 +769,39 @@
             font-size: 14px;
         }
 
-        .modal input:focus {
-            border-color: var(--primary);
+        .modal input:focus { border-color: var(--primary); }
+
+        /* Visor Lightbox para fotos */
+        #lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            animation: fadeIn 0.2s ease;
         }
 
-        /* --- Auth Overlay y Tabs --- */
+        #lightbox-img {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            object-fit: contain;
+        }
+
+        .lightbox-controls {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Auth */
         #auth-overlay {
             position: fixed;
             inset: 0;
@@ -637,12 +854,11 @@
             box-shadow: 0 2px 8px var(--primary-glow);
         }
 
-        /* --- Notificaciones Toast --- */
         #toast-container {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 2000;
+            z-index: 4000;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -688,6 +904,19 @@
 
     <div id="toast-container"></div>
 
+    <!-- Visor Lightbox para Fotos -->
+    <div id="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-controls">
+            <button class="icon-btn" id="lightbox-download-btn" title="Descargar Imagen">
+                <i data-lucide="download" size="20"></i>
+            </button>
+            <button class="icon-btn" onclick="closeLightbox()" title="Cerrar">
+                <i data-lucide="x" size="22"></i>
+            </button>
+        </div>
+        <img id="lightbox-img" src="" alt="Vista ampliada">
+    </div>
+
     <!-- Login / Registro Overlay -->
     <div id="auth-overlay">
         <div class="auth-card">
@@ -699,7 +928,6 @@
                 <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Mensajería en tiempo real y salas privadas</p>
             </div>
 
-            <!-- Selector de Modo: Login / Registro -->
             <div class="auth-tabs">
                 <button type="button" class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar Sesión</button>
                 <button type="button" class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Crear Cuenta</button>
@@ -731,12 +959,10 @@
         </div>
     </div>
 
-    <!-- Modal: Editar Perfil (Nombre y Foto) -->
+    <!-- Modal: Editar Perfil -->
     <div class="modal-overlay" id="modal-edit-profile">
         <div class="modal">
             <h3>Editar Mi Perfil</h3>
-            
-            <!-- Vista Previa de la Foto -->
             <div style="display: flex; align-items: center; gap: 16px; margin: 4px 0;">
                 <div class="avatar" id="edit-avatar-preview-box" style="width: 60px; height: 60px; font-size: 20px;">
                     <span id="edit-avatar-initials">?</span>
@@ -785,7 +1011,7 @@
     <div class="modal-overlay" id="modal-create-room">
         <div class="modal">
             <h3>Crear Nueva Sala Privada</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Serás el creador de esta sala y podrás invitar personas por su correo.</p>
+            <p style="font-size: 13px; color: var(--text-muted);">Serás el creador y podrás invitar personas por su correo.</p>
             <input type="text" id="new-room-name" placeholder="Nombre (ej. Proyecto Alfa)" required>
             <div style="display: flex; gap: 8px; justify-content: flex-end;">
                 <button class="btn btn-secondary" onclick="closeModal('modal-create-room')">Cancelar</button>
@@ -830,7 +1056,6 @@
 
     <!-- Estructura Principal -->
     <div class="app-layout">
-        <!-- Barra Lateral -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="profile-badge" onclick="abrirModalPerfil()" title="Editar Perfil">
@@ -856,7 +1081,6 @@
                 </div>
             </div>
 
-            <!-- Banner interactivo de invitaciones -->
             <div id="invitations-banner" class="invitations-banner" style="display: none;" onclick="openModal('modal-pending-invites')">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i data-lucide="mail" size="16" color="#a5b4fc"></i>
@@ -882,7 +1106,6 @@
             <div class="room-section" id="rooms-list"></div>
         </aside>
 
-        <!-- Contenedor Principal de Chat -->
         <main class="chat-main">
             <header class="chat-header">
                 <div class="header-info">
@@ -918,8 +1141,35 @@
             </div>
 
             <div class="chat-input-wrapper">
+                <!-- Barra de respuesta activa -->
+                <div id="reply-banner" class="reply-banner">
+                    <div class="reply-banner-content">
+                        <i data-lucide="reply" size="14"></i>
+                        <span>Respondiendo a <strong id="reply-author-name"></strong>: <span id="reply-snippet-text"></span></span>
+                    </div>
+                    <button class="icon-btn" onclick="cancelReply()" style="padding: 2px;" title="Cancelar respuesta">
+                        <i data-lucide="x" size="14"></i>
+                    </button>
+                </div>
+
+                <!-- Previsualización de imagen adjunta -->
+                <div id="image-preview-bar" class="image-preview-bar">
+                    <img id="image-preview-thumb" class="preview-thumb" src="" alt="Adjunto">
+                    <span style="font-size: 12px; color: var(--text-muted); flex: 1;">Imagen lista para enviar</span>
+                    <button class="icon-btn" onclick="cancelImageAttachment()" style="padding: 4px;" title="Quitar imagen">
+                        <i data-lucide="x" size="16"></i>
+                    </button>
+                </div>
+
+                <!-- Formulario de Entrada -->
                 <form class="chat-input-form" onsubmit="sendMsg(event)">
-                    <input type="text" id="msg-input" placeholder="Escribe un mensaje..." autocomplete="off" required>
+                    <label class="icon-btn" style="cursor: pointer;" title="Adjuntar imagen">
+                        <i data-lucide="image" size="18"></i>
+                        <input type="file" id="chat-file-input" accept="image/*" style="display: none;" onchange="handleChatFileInput(event)">
+                    </label>
+
+                    <input type="text" id="msg-input" placeholder="Escribe un mensaje o pega una imagen (Ctrl + V)..." autocomplete="off">
+                    
                     <button class="btn" type="submit" style="padding: 8px 12px;">
                         <i data-lucide="send" size="16"></i>
                     </button>
@@ -940,11 +1190,18 @@
         let invitesChannel = null;
         let cachedRooms = [];
         const profileCache = new Map();
-        let authMode = 'login'; // 'login' | 'register'
+        const messagesCache = new Map(); // id -> message
+        let authMode = 'login';
+
+        // Estados de respuestas e imagen pendiente
+        let currentReplyTarget = null; // { id, author, text }
+        let currentPendingImageBase64 = null;
+
+        const QUICK_EMOJIS = ['👍', '❤️', '😂', '😮', '🔥', '🎉'];
 
         lucide.createIcons();
 
-        // 1. Notificaciones Toast
+        // 1. Toast
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -958,7 +1215,6 @@
             }, 3500);
         }
 
-        // 2. Sanitizador Anti-XSS
         function escapeHTML(str) {
             if (!str) return '';
             const div = document.createElement('div');
@@ -966,7 +1222,6 @@
             return div.innerHTML;
         }
 
-        // 3. Audio de notificación
         function playChime() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -984,7 +1239,6 @@
             } catch (e) {}
         }
 
-        // 4. Copiar texto
         function copyText(text) {
             navigator.clipboard.writeText(text).then(() => {
                 showToast('Mensaje copiado al portapapeles', 'success');
@@ -1002,7 +1256,187 @@
             else sb.classList.add('hidden');
         }
 
-        // 5. Conmutador Auth
+        // 2. Visor Lightbox para imágenes
+        function openLightbox(url) {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            const dlBtn = document.getElementById('lightbox-download-btn');
+
+            img.src = url;
+            dlBtn.onclick = () => {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `chat-imagen-${Date.now()}.jpg`;
+                a.click();
+            };
+
+            modal.style.display = 'flex';
+        }
+
+        function closeLightbox(e) {
+            if (!e || e.target.id === 'lightbox-modal' || e.target.closest('button')) {
+                document.getElementById('lightbox-modal').style.display = 'none';
+            }
+        }
+
+        // 3. Manejadores de Imagen en Chat (Subida y Pegado con Ctrl + V)
+        function handleChatFileInput(event) {
+            const file = event.target.files[0];
+            if (file) processChatImageFile(file);
+            event.target.value = '';
+        }
+
+        // Listener para pegar con Ctrl+V
+        window.addEventListener('paste', (e) => {
+            if (!activeRoom) return;
+            const items = (e.clipboardData || e.originalEvent?.clipboardData)?.items;
+            if (!items) return;
+
+            for (const item of items) {
+                if (item.type.indexOf('image') === 0) {
+                    const blob = item.getAsFile();
+                    processChatImageFile(blob);
+                    e.preventDefault();
+                    break;
+                }
+            }
+        });
+
+        function processChatImageFile(file) {
+            if (!file.type.startsWith('image/')) {
+                return showToast('El archivo debe ser una imagen', 'error');
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 1200;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDim || h > maxDim) {
+                        if (w > h) {
+                            h = Math.round((h * maxDim) / w);
+                            w = maxDim;
+                        } else {
+                            w = Math.round((w * maxDim) / h);
+                            h = maxDim;
+                        }
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const compressed = canvas.toDataURL('image/jpeg', 0.82);
+
+                    currentPendingImageBase64 = compressed;
+                    document.getElementById('image-preview-thumb').src = compressed;
+                    document.getElementById('image-preview-bar').classList.add('active');
+                    document.getElementById('msg-input').focus();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cancelImageAttachment() {
+            currentPendingImageBase64 = null;
+            document.getElementById('image-preview-thumb').src = '';
+            document.getElementById('image-preview-bar').classList.remove('active');
+        }
+
+        // 4. Gestión de Respuestas (Replies)
+        function startReply(msgId) {
+            const msg = messagesCache.get(msgId);
+            if (!msg) return;
+
+            const author = msg.sender_id === currentUser.id ? 'Tú' : (msg.profiles?.username || 'Usuario');
+            const snippet = msg.content || (msg.image_url ? '📷 [Imagen]' : 'Mensaje');
+
+            currentReplyTarget = { id: msg.id, author, text: snippet };
+
+            document.getElementById('reply-author-name').innerText = author;
+            document.getElementById('reply-snippet-text').innerText = snippet;
+            document.getElementById('reply-banner').classList.add('active');
+            document.getElementById('msg-input').focus();
+        }
+
+        function cancelReply() {
+            currentReplyTarget = null;
+            document.getElementById('reply-banner').classList.remove('active');
+        }
+
+        function scrollToParentMessage(parentId) {
+            const el = document.getElementById(`msg-${parentId}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.classList.add('highlight-pulse');
+                setTimeout(() => el.classList.remove('highlight-pulse'), 1500);
+            } else {
+                showToast('El mensaje original no está visible en el historial cargado.', 'info');
+            }
+        }
+
+        // 5. Gestión de Reacciones con Emojis
+        function toggleReactionPopover(msgId, event) {
+            event.stopPropagation();
+            const popover = document.getElementById(`reaction-popover-${msgId}`);
+            if (!popover) return;
+
+            // Cerrar otros abiertos
+            document.querySelectorAll('.reaction-popover.active').forEach(p => {
+                if (p !== popover) p.classList.remove('active');
+            });
+
+            popover.classList.toggle('active');
+        }
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.reaction-popover.active').forEach(p => p.classList.remove('active'));
+        });
+
+        async function reactToMessage(msgId, emoji) {
+            document.querySelectorAll('.reaction-popover.active').forEach(p => p.classList.remove('active'));
+
+            const { data, error } = await db.rpc('toggle_reaction', {
+                p_message_id: msgId,
+                p_emoji: emoji
+            });
+
+            if (error) return showToast('Error al reaccionar: ' + error.message, 'error');
+
+            const m = messagesCache.get(msgId);
+            if (m) {
+                m.reactions = data;
+                updateReactionsUI(m);
+            }
+        }
+
+        function updateReactionsUI(m) {
+            const container = document.getElementById(`reactions-row-${m.id}`);
+            if (!container) return;
+
+            container.innerHTML = '';
+            const reactions = m.reactions || {};
+
+            Object.entries(reactions).forEach(([emoji, users]) => {
+                if (Array.isArray(users) && users.length > 0) {
+                    const isMyReaction = currentUser && users.includes(currentUser.id);
+                    const pill = document.createElement('div');
+                    pill.className = `reaction-pill ${isMyReaction ? 'reacted' : ''}`;
+                    pill.innerHTML = `<span>${emoji}</span><span>${users.length}</span>`;
+                    pill.title = `${users.length} reacción(es)`;
+                    pill.onclick = (e) => {
+                        e.stopPropagation();
+                        reactToMessage(m.id, emoji);
+                    };
+                    container.appendChild(pill);
+                }
+            });
+        }
+
+        // 6. Conmutador Auth
         function switchAuthTab(mode) {
             authMode = mode;
             const tabLogin = document.getElementById('tab-login');
@@ -1026,7 +1460,6 @@
             }
         }
 
-        // 6. Proceso de Login / Registro
         async function handleAuthSubmit(e) {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -1041,7 +1474,7 @@
                 if (authMode === 'login') {
                     const { data, error } = await db.auth.signInWithPassword({ email, password });
                     if (error) {
-                        showToast(`Error al iniciar sesión: ${error.message}`, 'error');
+                        showToast(`Error: ${error.message}`, 'error');
                         btn.disabled = false;
                         return;
                     }
@@ -1082,7 +1515,6 @@
             }
         }
 
-        // 7. Configuración de Perfil (Nombre y Foto)
         function abrirModalPerfil() {
             document.getElementById('edit-username').value = currentUserProfile.username;
             document.getElementById('edit-avatar-url').value = currentUserProfile.avatar_url || '';
@@ -1094,7 +1526,7 @@
             const preview = document.getElementById('edit-avatar-preview');
             const initials = document.getElementById('edit-avatar-initials');
             const name = document.getElementById('edit-username').value || currentUserProfile.username || 'U';
-            initials.innerText = name.slice(0, 2).toUpperCase();
+            initials.innerText = (name || 'U').slice(0, 2).toUpperCase();
 
             if (url && url.trim()) {
                 preview.src = url.trim();
@@ -1113,7 +1545,6 @@
             }
         }
 
-        // Conversión y compresión automática de fotos locales
         function handleAvatarFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1185,7 +1616,7 @@
         }
 
         function actualizarSidebarPerfil(name, avatarUrl) {
-            document.getElementById('current-user-email').innerText = name;
+            document.getElementById('current-user-email').innerText = name || 'Usuario';
             const img = document.getElementById('current-user-avatar-img');
             const txt = document.getElementById('current-user-avatar-text');
 
@@ -1196,16 +1627,15 @@
                 img.onerror = () => {
                     img.style.display = 'none';
                     txt.style.display = 'block';
-                    txt.innerText = name.slice(0, 2).toUpperCase();
+                    txt.innerText = (name || 'U').slice(0, 2).toUpperCase();
                 };
             } else {
                 img.style.display = 'none';
                 txt.style.display = 'block';
-                txt.innerText = name.slice(0, 2).toUpperCase();
+                txt.innerText = (name || 'U').slice(0, 2).toUpperCase();
             }
         }
 
-        // 8. Cambiar Contraseña
         async function guardarNuevaContrasena() {
             const passInput = document.getElementById('new-account-password');
             const newPassword = passInput.value;
@@ -1238,14 +1668,12 @@
             location.reload();
         }
 
-        // 9. Inicialización de la Aplicación
         async function initApp() {
             if (!currentUser) return;
 
             document.getElementById('auth-overlay').style.display = 'none';
             const email = currentUser.email.toLowerCase();
 
-            // Cargar datos del perfil existente
             const { data: prof } = await db.from('profiles').select('username, avatar_url').eq('id', currentUser.id).maybeSingle();
             
             const username = prof?.username || currentUser.user_metadata?.username || email.split('@')[0];
@@ -1256,7 +1684,6 @@
 
             actualizarSidebarPerfil(username, avatarUrl);
 
-            // Sincronizar por si es usuario nuevo
             if (!prof) {
                 try {
                     await db.from('profiles').upsert({ id: currentUser.id, username, avatar_url: avatarUrl }, { onConflict: 'id' });
@@ -1280,10 +1707,9 @@
                 .subscribe();
         }
 
-        // 10. Cargar y Filtrar Salas
         async function loadRooms() {
             const { data: rooms, error } = await db.from('rooms').select('*');
-            if (error) return showToast('Error al cargar canales', 'error');
+            if (error) return showToast('Error al cargar canales: ' + error.message, 'error');
 
             cachedRooms = rooms || [];
             renderRooms(cachedRooms);
@@ -1307,7 +1733,7 @@
                 item.className = `room-item ${r.id === activeRoom?.id ? 'active' : ''}`;
                 item.innerHTML = `
                     <i data-lucide="${r.is_public ? 'globe' : 'lock'}" size="16"></i>
-                    <span style="font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(r.name)}</span>
+                    <span style="font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(r.name || 'Sin título')}</span>
                 `;
                 item.onclick = () => {
                     openRoom(r);
@@ -1319,19 +1745,22 @@
         }
 
         function filterRooms(q) {
-            const query = q.toLowerCase();
-            renderRooms(cachedRooms.filter(r => r.name.toLowerCase().includes(query)));
+            const query = (q || '').toLowerCase();
+            renderRooms(cachedRooms.filter(r => (r.name || '').toLowerCase().includes(query)));
         }
 
-        // 11. Abrir Sala y Cargar Mensajes
+        // 7. Cargar y Renderizar Sala
         async function openRoom(room) {
             activeRoom = room;
+            messagesCache.clear();
+            cancelReply();
+            cancelImageAttachment();
             renderRooms(cachedRooms);
 
             const titleEl = document.getElementById('room-title');
             titleEl.innerHTML = `
                 <i data-lucide="${room.is_public ? 'globe' : 'lock'}" size="18"></i>
-                <span>${escapeHTML(room.name)}</span>
+                <span>${escapeHTML(room.name || 'Sala')}</span>
             `;
             document.getElementById('room-subtitle').innerText = room.is_public ? 'Canal público abierto a todos' : 'Canal privado protegido';
 
@@ -1348,25 +1777,33 @@
                 activeChannel = null;
             }
 
-            const { data: msgs } = await db.from('messages')
+            const { data: msgs, error } = await db.from('messages')
                 .select('*, profiles(username, avatar_url)')
                 .eq('room_id', room.id)
                 .order('created_at', { ascending: true });
 
+            if (error) {
+                box.innerHTML = `<div class="empty-chat"><p style="color:#ef4444;">Error: ${escapeHTML(error.message)}</p></div>`;
+                return;
+            }
+
             box.innerHTML = '';
             if (msgs && msgs.length > 0) {
-                msgs.forEach(m => renderMsg(m));
+                msgs.forEach(m => {
+                    messagesCache.set(m.id, m);
+                    renderMsg(m);
+                });
             } else {
                 box.innerHTML = `
                     <div class="empty-chat">
                         <i data-lucide="message-circle" size="44"></i>
-                        <p>No hay mensajes en <strong>${escapeHTML(room.name)}</strong>. ¡Escribe el primero!</p>
+                        <p>No hay mensajes en <strong>${escapeHTML(room.name || '')}</strong>. ¡Escribe el primero!</p>
                     </div>`;
                 lucide.createIcons();
             }
             scrollToBottom();
 
-            // Escucha en tiempo real
+            // Realtime para nuevos mensajes y actualizaciones de reacciones
             activeChannel = db.channel(`room:${room.id}`)
                 .on('postgres_changes', { 
                     event: 'INSERT', 
@@ -1383,14 +1820,29 @@
                         });
                     }
                     const prof = profileCache.get(msg.sender_id);
+                    const completeMsg = { ...msg, profiles: prof };
+                    messagesCache.set(msg.id, completeMsg);
 
                     const empty = box.querySelector('.empty-chat');
                     if (empty) empty.remove();
 
-                    renderMsg({ ...msg, profiles: prof });
+                    renderMsg(completeMsg);
                     scrollToBottom();
 
                     if (currentUser && msg.sender_id !== currentUser.id) playChime();
+                })
+                .on('postgres_changes', { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'messages', 
+                    filter: `room_id=eq.${room.id}` 
+                }, p => {
+                    const updated = p.new;
+                    const existing = messagesCache.get(updated.id);
+                    if (existing) {
+                        existing.reactions = updated.reactions;
+                        updateReactionsUI(existing);
+                    }
                 })
                 .subscribe();
         }
@@ -1401,17 +1853,19 @@
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        // 12. Renderizado de Mensajes con Foto de Perfil
+        // 8. Renderizado Completo del Mensaje (con imagen, reply y reacciones)
         function renderMsg(m) {
             const isMe = currentUser && m.sender_id === currentUser.id;
             const author = isMe ? 'Tú' : (m.profiles?.username || 'Usuario');
             const avatarUrl = isMe ? currentUserProfile.avatar_url : (m.profiles?.avatar_url || null);
             const time = formatTime(m.created_at || new Date());
-            const initials = escapeHTML((isMe ? currentUserProfile.username : author).slice(0, 2).toUpperCase());
+            const initials = escapeHTML(((isMe ? currentUserProfile.username : author) || 'U').slice(0, 2).toUpperCase());
 
             const row = document.createElement('div');
+            row.id = `msg-${m.id}`;
             row.className = `msg-row ${isMe ? 'sent' : 'received'}`;
 
+            // Avatar
             const avatar = document.createElement('div');
             avatar.className = 'msg-avatar';
             if (avatarUrl) {
@@ -1423,33 +1877,115 @@
             const contentBlock = document.createElement('div');
             contentBlock.className = 'msg-content-block';
 
+            // Meta (autor y hora)
             const meta = document.createElement('div');
             meta.className = 'msg-meta';
             meta.innerHTML = `<span class="author">${escapeHTML(author)}</span><span class="time">${time}</span>`;
 
+            // Contenedor de la burbuja
             const bubbleContainer = document.createElement('div');
             bubbleContainer.className = 'msg-bubble-container';
 
+            // Burbuja principal
             const bubble = document.createElement('div');
             bubble.className = 'msg-bubble';
-            bubble.textContent = m.content;
 
+            // Si es respuesta a otro mensaje
+            if (m.reply_to_id) {
+                const parent = messagesCache.get(m.reply_to_id);
+                const parentAuthor = parent ? (parent.sender_id === currentUser?.id ? 'Tú' : (parent.profiles?.username || 'Usuario')) : 'Mensaje';
+                const parentText = parent ? (parent.content || (parent.image_url ? '📷 [Imagen]' : 'Mensaje')) : 'Mensaje citado';
+
+                const quoteEl = document.createElement('div');
+                quoteEl.className = 'msg-reply-quote';
+                quoteEl.innerHTML = `
+                    <span class="reply-author">${escapeHTML(parentAuthor)}</span>
+                    <span class="reply-text">${escapeHTML(parentText)}</span>
+                `;
+                quoteEl.onclick = () => scrollToParentMessage(m.reply_to_id);
+                bubble.appendChild(quoteEl);
+            }
+
+            // Si incluye imagen
+            if (m.image_url) {
+                const imgEl = document.createElement('img');
+                imgEl.src = m.image_url;
+                imgEl.className = 'msg-image';
+                imgEl.alt = 'Imagen adjunta';
+                imgEl.onclick = () => openLightbox(m.image_url);
+                bubble.appendChild(imgEl);
+            }
+
+            // Texto del mensaje
+            if (m.content && m.content.trim()) {
+                const textSpan = document.createElement('span');
+                textSpan.style.whiteSpace = 'pre-wrap';
+                textSpan.textContent = m.content;
+                bubble.appendChild(textSpan);
+            }
+
+            // Barra flotante de acciones (Responder, Reaccionar, Copiar)
+            const actions = document.createElement('div');
+            actions.className = 'msg-actions';
+
+            // Botón Responder
+            const replyBtn = document.createElement('button');
+            replyBtn.className = 'msg-action-btn';
+            replyBtn.title = 'Responder';
+            replyBtn.innerHTML = '<i data-lucide="reply" size="14"></i>';
+            replyBtn.onclick = () => startReply(m.id);
+
+            // Botón Reaccionar
+            const reactBtn = document.createElement('button');
+            reactBtn.className = 'msg-action-btn';
+            reactBtn.title = 'Reaccionar';
+            reactBtn.innerHTML = '<i data-lucide="smile" size="14"></i>';
+            reactBtn.onclick = (e) => toggleReactionPopover(m.id, e);
+
+            // Popover con emojis rápidos
+            const popover = document.createElement('div');
+            popover.id = `reaction-popover-${m.id}`;
+            popover.className = 'reaction-popover';
+            QUICK_EMOJIS.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.className = 'popover-emoji';
+                btn.innerText = emoji;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    reactToMessage(m.id, emoji);
+                };
+                popover.appendChild(btn);
+            });
+
+            // Botón Copiar (si hay texto)
             const copyBtn = document.createElement('button');
-            copyBtn.className = 'msg-copy-btn';
+            copyBtn.className = 'msg-action-btn';
             copyBtn.title = 'Copiar texto';
-            copyBtn.innerHTML = '<i data-lucide="copy" size="13"></i>';
-            copyBtn.onclick = () => copyText(m.content);
+            copyBtn.innerHTML = '<i data-lucide="copy" size="14"></i>';
+            copyBtn.onclick = () => copyText(m.content || m.image_url || '');
+
+            actions.appendChild(replyBtn);
+            actions.appendChild(reactBtn);
+            if (m.content) actions.appendChild(copyBtn);
 
             bubbleContainer.appendChild(bubble);
-            bubbleContainer.appendChild(copyBtn);
+            bubbleContainer.appendChild(actions);
+            bubbleContainer.appendChild(popover);
+
+            // Fila de reacciones acumuladas
+            const reactionsRow = document.createElement('div');
+            reactionsRow.id = `reactions-row-${m.id}`;
+            reactionsRow.className = 'reaction-pills-row';
 
             contentBlock.appendChild(meta);
             contentBlock.appendChild(bubbleContainer);
+            contentBlock.appendChild(reactionsRow);
 
             row.appendChild(avatar);
             row.appendChild(contentBlock);
 
             document.getElementById('msgs').appendChild(row);
+            updateReactionsUI(m);
             lucide.createIcons();
         }
 
@@ -1458,24 +1994,33 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // 13. Envío de Mensajes
+        // 9. Envío de Mensaje
         async function sendMsg(e) {
             e.preventDefault();
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
-            if (!text || !activeRoom || !currentUser) return;
+            const imageToSend = currentPendingImageBase64;
+            const replyId = currentReplyTarget ? currentReplyTarget.id : null;
+
+            if ((!text && !imageToSend) || !activeRoom || !currentUser) return;
 
             input.value = '';
+            cancelImageAttachment();
+            cancelReply();
+
             const { error } = await db.from('messages').insert([{ 
                 room_id: activeRoom.id, 
                 sender_id: currentUser.id, 
-                content: text 
+                content: text || '',
+                image_url: imageToSend || null,
+                reply_to_id: replyId,
+                reactions: {}
             }]);
 
-            if (error) showToast('Error al enviar el mensaje', 'error');
+            if (error) showToast('Error al enviar el mensaje: ' + error.message, 'error');
         }
 
-        // 14. Crear Sala
+        // 10. Crear Sala
         async function crearSala() {
             const name = document.getElementById('new-room-name').value.trim();
             if (!name) return;
@@ -1488,10 +2033,13 @@
             showToast('Sala creada con éxito', 'success');
 
             await loadRooms();
-            if (data) openRoom(data);
+            if (data) {
+                const targetId = typeof data === 'object' ? data.id : data;
+                const found = cachedRooms.find(r => r.id === targetId);
+                if (found) openRoom(found);
+            }
         }
 
-        // 15. Enviar Invitación
         async function enviarInvitacion() {
             const email = document.getElementById('invite-email').value.trim().toLowerCase();
             if (!email || !activeRoom) return;
@@ -1508,7 +2056,6 @@
             document.getElementById('invite-email').value = '';
         }
 
-        // 16. Ver Miembros con Fotos
         async function verMiembrosSala() {
             if (!activeRoom) return;
 
@@ -1543,7 +2090,7 @@
             members.forEach(m => {
                 const name = m.profiles?.username || 'Usuario';
                 const avatarUrl = m.profiles?.avatar_url || null;
-                const initials = name.slice(0, 2).toUpperCase();
+                const initials = (name || 'U').slice(0, 2).toUpperCase();
                 const isOwner = m.user_id === activeRoom.owner_id;
 
                 const avatarHtml = avatarUrl 
@@ -1563,7 +2110,6 @@
             });
         }
 
-        // 17. Revisar y Responder Invitaciones
         async function checkPendingInvitations() {
             if (!currentUser || !currentUser.email) return;
 
@@ -1612,7 +2158,6 @@
             await loadRooms();
         }
 
-        // 18. Escuchador de Sesión
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await db.auth.getSession();
             if (session?.user) {
@@ -1632,5 +2177,4 @@
         });
     </script>
 </body>
-
 </html>
