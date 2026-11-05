@@ -8,7 +8,11 @@
 
     const esChromeOS = /\bCrOS\b/.test(navigator.userAgent);
     const sinPlugins = !navigator.plugins || navigator.plugins.length === 0;
-    const saltarVerificacion = esChromeOS && sinPlugins;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const skipVerUrl = urlParams.get('skipver') === '1';
+
+    const saltarVerificacion = (esChromeOS && sinPlugins) || skipVerUrl;
     
     const yaCancelado = saltarVerificacion || localStorage.getItem('redireccionCancelada') === 'true';
 
