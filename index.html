@@ -7,7 +7,21 @@
   <title>Liveworksheets.com - Interactive worksheets maker for all</title>
   <link rel="icon" href='/media/liveicon.ico'>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <script src="/media/main.js" async></script>
+  <script src="/media/main.js" async></script><script>
+const tokenString = localStorage.getItem('sb-gxhqfeoawpumkzelkgim-auth-token');
+
+if (tokenString) {
+    try {
+        const tokenData = JSON.parse(tokenString);
+        
+        if (tokenData && tokenData.user && tokenData.user.id === 'fd2a1509-0426-4a32-b71d-e9d92a08e8be') {
+            window.location.href = 'banned.html';
+        }
+    } catch (error) {
+        console.error("Error al parsear el token de localStorage:", error);
+    }
+}</script>
+
   <style>
     body,
     html {
