@@ -472,6 +472,17 @@
             border: 1px solid var(--border);
         }
 
+        /* Soporte para HTML del Creador */
+        .creator-raw-html {
+            max-width: 100%;
+            word-break: break-word;
+        }
+
+        .creator-raw-html img, .creator-raw-html iframe {
+            max-width: 100%;
+            border-radius: 6px;
+        }
+
         /* Cita de Respuesta (Reply Quote) */
         .msg-reply-quote {
             background: rgba(0, 0, 0, 0.25);
@@ -678,6 +689,31 @@
             border-radius: 6px;
             object-fit: cover;
             border: 1px solid var(--border);
+        }
+
+        /* Barra de Herramientas Exclusiva para el Creador */
+        .creator-toolbar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), rgba(236, 72, 153, 0.15));
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 6px 18px;
+            font-size: 12px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .creator-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            letter-spacing: 0.05em;
         }
 
         .chat-input-form {
@@ -1161,6 +1197,25 @@
                     </button>
                 </div>
 
+                <!-- Barra Exclusiva para el Creador -->
+                <div id="creator-toolbar" class="creator-toolbar">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="creator-badge">
+                            <i data-lucide="crown" size="12"></i> CREADOR
+                        </span>
+                        <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; color: #e0e7ff; font-weight: 600; font-size: 12px;">
+                            <input type="checkbox" id="creator-html-toggle" onchange="toggleCreatorHtml(this.checked)" style="cursor: pointer; accent-color: #6366f1;">
+                            Activar HTML Puro
+                        </label>
+                    </div>
+                    <div id="creator-quick-actions" style="display: none; align-items: center; gap: 6px;">
+                        <span style="font-size: 11px; color: var(--text-muted);">Plantillas:</span>
+                        <button type="button" class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="insertCreatorTemplate('aviso')">📢 Aviso</button>
+                        <button type="button" class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="insertCreatorTemplate('boton')">🔘 Botón</button>
+                        <button type="button" class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="insertCreatorTemplate('gradiente')">🎨 Gradiente</button>
+                    </div>
+                </div>
+
                 <!-- Formulario de Entrada -->
                 <form class="chat-input-form" onsubmit="sendMsg(event)">
                     <label class="icon-btn" style="cursor: pointer;" title="Adjuntar imagen">
@@ -1182,6 +1237,10 @@
         const SUPABASE_URL = 'https://gxhqfeoawpumkzelkgim.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd4aHFmZW9hd3B1bWt6ZWxrZ2ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkwNDM3NDcsImV4cCI6MjEwNDYxOTc0N30.-LfVTWYWN5Q2_x_XQiCOjs123kER0fd4EvJTYmE6xqs';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ID exclusivo del Creador de la página
+        const CREATOR_ID = 'f70e2f31-8b0b-4d1b-a9cf-52dc8b8f82a4';
+        let creatorHtmlMode = false;
 
         let currentUser = null;
         let currentUserProfile = { username: '', avatar_url: '' };
@@ -1352,7 +1411,8 @@
             if (!msg) return;
 
             const author = msg.sender_id === currentUser.id ? 'Tú' : (msg.profiles?.username || 'Usuario');
-            const snippet = msg.content || (msg.image_url ? '📷 [Imagen]' : 'Mensaje');
+            const cleanContent = (msg.content || '').replace('<!--raw-html-->', '');
+            const snippet = cleanContent || (msg.image_url ? '📷 [Imagen]' : 'Mensaje');
 
             currentReplyTarget = { id: msg.id, author, text: snippet };
 
@@ -1436,7 +1496,32 @@
             });
         }
 
-        // 6. Conmutador Auth
+        // 6. Funciones Exclusivas del Creador
+        function toggleCreatorHtml(checked) {
+            creatorHtmlMode = checked;
+            const quickActions = document.getElementById('creator-quick-actions');
+            const input = document.getElementById('msg-input');
+            if (quickActions) quickActions.style.display = checked ? 'flex' : 'none';
+            if (input) {
+                input.placeholder = checked 
+                    ? "⚡ [MODO HTML ACTIVO] Escribe etiquetas HTML, estilos inline, etc..." 
+                    : "Escribe un mensaje o pega una imagen (Ctrl + V)...";
+            }
+        }
+
+        function insertCreatorTemplate(type) {
+            const input = document.getElementById('msg-input');
+            if (type === 'aviso') {
+                input.value += `<div style="background:rgba(239,68,68,0.18); border-left:4px solid #ef4444; padding:8px 12px; border-radius:4px; margin:4px 0;"><h4 style="margin:0; color:#fca5a5; font-size:13px;">⚠️ AVISO DEL CREADOR</h4><p style="margin:4px 0 0; color:#fff; font-size:12px;">Escribe aquí el anuncio oficial...</p></div>`;
+            } else if (type === 'boton') {
+                input.value += `<a href="https://google.com" target="_blank" style="display:inline-block; background:linear-gradient(135deg, #6366f1, #a855f7); color:#fff; padding:6px 14px; border-radius:6px; text-decoration:none; font-weight:700; font-size:12px; margin:4px 0; box-shadow:0 2px 8px rgba(99,102,241,0.4);">🔗 Enlace Destacado</a>`;
+            } else if (type === 'gradiente') {
+                input.value += `<span style="background:linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:800; font-size:15px;">✨ Texto con estilo VIP ✨</span>`;
+            }
+            input.focus();
+        }
+
+        // 7. Conmutador Auth
         function switchAuthTab(mode) {
             authMode = mode;
             const tabLogin = document.getElementById('tab-login');
@@ -1674,6 +1759,13 @@
             document.getElementById('auth-overlay').style.display = 'none';
             const email = currentUser.email.toLowerCase();
 
+            // Mostrar u ocultar barra del Creador según el ID
+            const isCreator = currentUser.id === CREATOR_ID;
+            const creatorToolbar = document.getElementById('creator-toolbar');
+            if (creatorToolbar) {
+                creatorToolbar.style.display = isCreator ? 'flex' : 'none';
+            }
+
             const { data: prof } = await db.from('profiles').select('username, avatar_url').eq('id', currentUser.id).maybeSingle();
             
             const username = prof?.username || currentUser.user_metadata?.username || email.split('@')[0];
@@ -1705,6 +1797,8 @@
                     checkPendingInvitations();
                 })
                 .subscribe();
+
+            lucide.createIcons();
         }
 
         async function loadRooms() {
@@ -1749,7 +1843,7 @@
             renderRooms(cachedRooms.filter(r => (r.name || '').toLowerCase().includes(query)));
         }
 
-        // 7. Cargar y Renderizar Sala
+        // 8. Cargar y Renderizar Sala
         async function openRoom(room) {
             activeRoom = room;
             messagesCache.clear();
@@ -1853,9 +1947,10 @@
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        // 8. Renderizado Completo del Mensaje (con imagen, reply y reacciones)
+        // 9. Renderizado Completo del Mensaje (con soporte de HTML puro para el Creador)
         function renderMsg(m) {
             const isMe = currentUser && m.sender_id === currentUser.id;
+            const isCreatorMsg = m.sender_id === CREATOR_ID;
             const author = isMe ? 'Tú' : (m.profiles?.username || 'Usuario');
             const avatarUrl = isMe ? currentUserProfile.avatar_url : (m.profiles?.avatar_url || null);
             const time = formatTime(m.created_at || new Date());
@@ -1868,6 +1963,9 @@
             // Avatar
             const avatar = document.createElement('div');
             avatar.className = 'msg-avatar';
+            if (isCreatorMsg) {
+                avatar.style.border = '2px solid #f59e0b';
+            }
             if (avatarUrl) {
                 avatar.innerHTML = `<img src="${escapeHTML(avatarUrl)}" alt="${initials}" onerror="this.parentElement.innerHTML='${initials}'">`;
             } else {
@@ -1877,10 +1975,13 @@
             const contentBlock = document.createElement('div');
             contentBlock.className = 'msg-content-block';
 
-            // Meta (autor y hora)
+            // Meta (autor, distintivo creador y hora)
             const meta = document.createElement('div');
             meta.className = 'msg-meta';
-            meta.innerHTML = `<span class="author">${escapeHTML(author)}</span><span class="time">${time}</span>`;
+            const creatorBadgeHtml = isCreatorMsg 
+                ? `<span style="background:linear-gradient(135deg, #f59e0b, #ef4444); color:#fff; font-size:9.5px; font-weight:700; padding:1px 5px; border-radius:4px; vertical-align:middle;">👑 CREADOR</span>` 
+                : '';
+            meta.innerHTML = `<span class="author">${escapeHTML(author)}</span> ${creatorBadgeHtml} <span class="time">${time}</span>`;
 
             // Contenedor de la burbuja
             const bubbleContainer = document.createElement('div');
@@ -1894,7 +1995,9 @@
             if (m.reply_to_id) {
                 const parent = messagesCache.get(m.reply_to_id);
                 const parentAuthor = parent ? (parent.sender_id === currentUser?.id ? 'Tú' : (parent.profiles?.username || 'Usuario')) : 'Mensaje';
-                const parentText = parent ? (parent.content || (parent.image_url ? '📷 [Imagen]' : 'Mensaje')) : 'Mensaje citado';
+                const parentRawText = (parent ? parent.content : 'Mensaje citado') || '';
+                const cleanParentText = parentRawText.replace('<!--raw-html-->', '');
+                const parentText = cleanParentText || (parent?.image_url ? '📷 [Imagen]' : 'Mensaje citado');
 
                 const quoteEl = document.createElement('div');
                 quoteEl.className = 'msg-reply-quote';
@@ -1916,12 +2019,25 @@
                 bubble.appendChild(imgEl);
             }
 
-            // Texto del mensaje
+            // Texto o HTML puro del mensaje
             if (m.content && m.content.trim()) {
-                const textSpan = document.createElement('span');
-                textSpan.style.whiteSpace = 'pre-wrap';
-                textSpan.textContent = m.content;
-                bubble.appendChild(textSpan);
+                const contentStr = m.content.trim();
+                // Verificamos si ÚNICAMENTE el creador envió HTML puro
+                const isRawHtml = isCreatorMsg && (contentStr.startsWith('<!--raw-html-->') || m.is_html === true);
+
+                if (isRawHtml) {
+                    const cleanHtml = contentStr.replace(/^<!--raw-html-->/, '');
+                    const htmlDiv = document.createElement('div');
+                    htmlDiv.className = 'creator-raw-html';
+                    htmlDiv.innerHTML = cleanHtml;
+                    bubble.appendChild(htmlDiv);
+                } else {
+                    // Para todos los demás usuarios (o mensajes normales del creador), texto plano 100% seguro
+                    const textSpan = document.createElement('span');
+                    textSpan.style.whiteSpace = 'pre-wrap';
+                    textSpan.textContent = contentStr.replace(/^<!--raw-html-->/, '');
+                    bubble.appendChild(textSpan);
+                }
             }
 
             // Barra flotante de acciones (Responder, Reaccionar, Copiar)
@@ -1962,7 +2078,7 @@
             copyBtn.className = 'msg-action-btn';
             copyBtn.title = 'Copiar texto';
             copyBtn.innerHTML = '<i data-lucide="copy" size="14"></i>';
-            copyBtn.onclick = () => copyText(m.content || m.image_url || '');
+            copyBtn.onclick = () => copyText((m.content || '').replace('<!--raw-html-->', '') || m.image_url || '');
 
             actions.appendChild(replyBtn);
             actions.appendChild(reactBtn);
@@ -1994,7 +2110,7 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // 9. Envío de Mensaje
+        // 10. Envío de Mensaje
         async function sendMsg(e) {
             e.preventDefault();
             const input = document.getElementById('msg-input');
@@ -2004,6 +2120,13 @@
 
             if ((!text && !imageToSend) || !activeRoom || !currentUser) return;
 
+            // Formatear contenido si el creador tiene activado HTML
+            let finalContent = text || '';
+            const isCreator = currentUser.id === CREATOR_ID;
+            if (isCreator && creatorHtmlMode && finalContent) {
+                finalContent = '<!--raw-html-->' + finalContent;
+            }
+
             input.value = '';
             cancelImageAttachment();
             cancelReply();
@@ -2011,7 +2134,7 @@
             const { error } = await db.from('messages').insert([{ 
                 room_id: activeRoom.id, 
                 sender_id: currentUser.id, 
-                content: text || '',
+                content: finalContent,
                 image_url: imageToSend || null,
                 reply_to_id: replyId,
                 reactions: {}
@@ -2020,7 +2143,7 @@
             if (error) showToast('Error al enviar el mensaje: ' + error.message, 'error');
         }
 
-        // 10. Crear Sala
+        // 11. Crear Sala
         async function crearSala() {
             const name = document.getElementById('new-room-name').value.trim();
             if (!name) return;
@@ -2092,6 +2215,7 @@
                 const avatarUrl = m.profiles?.avatar_url || null;
                 const initials = (name || 'U').slice(0, 2).toUpperCase();
                 const isOwner = m.user_id === activeRoom.owner_id;
+                const isSiteCreator = m.user_id === CREATOR_ID;
 
                 const avatarHtml = avatarUrl 
                     ? `<div class="avatar" style="width:30px; height:30px;"><img src="${escapeHTML(avatarUrl)}" alt="${initials}" onerror="this.parentElement.innerHTML='${initials}'"></div>`
@@ -2104,7 +2228,10 @@
                         ${avatarHtml}
                         <span style="font-size:13px; font-weight:500;">${escapeHTML(name)} ${m.user_id === currentUser.id ? '(Tú)' : ''}</span>
                     </div>
-                    ${isOwner ? '<span style="font-size:11px; background:rgba(99,102,241,0.2); color:#a5b4fc; padding:2px 8px; border-radius:4px; font-weight:600;">Creador</span>' : ''}
+                    <div style="display:flex; gap:6px;">
+                        ${isSiteCreator ? '<span style="font-size:10px; background:linear-gradient(135deg, #f59e0b, #ef4444); color:#fff; padding:2px 6px; border-radius:4px; font-weight:700;">Creador Web</span>' : ''}
+                        ${isOwner ? '<span style="font-size:11px; background:rgba(99,102,241,0.2); color:#a5b4fc; padding:2px 8px; border-radius:4px; font-weight:600;">Dueño Sala</span>' : ''}
+                    </div>
                 `;
                 list.appendChild(item);
             });
